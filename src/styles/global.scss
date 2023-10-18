@@ -1,0 +1,52 @@
+@import './card';
+
+// 全局样式
+* {
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#app {
+  height: 100%;
+  color: #eee;
+  font-size: 16px;
+  background-color: #333;
+}
+
+::selection {
+  color: #f3f3f3;
+  background: #0c4e6f;
+}
+
+// ::-webkit-scrollbar {
+//   width: 6px;
+//   height: 6px;
+// }
+
+// ::-webkit-scrollbar-track {
+//   background: rgb(0 0 0 / 20%);
+//   border-radius: 4px;
+// }
+
+// ::-webkit-scrollbar-thumb {
+//   background-color: #686868;
+//   border-radius: 4px;
+
+//   &:hover {
+//     background-color: rgb(144 147 153 / 50%);
+//   }
+// }
+
