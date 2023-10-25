@@ -302,6 +302,7 @@
 <style lang="scss" scoped>
   #card {
     z-index: 19;
+    user-select: none;
 
     .card__shine {
       --shift: 1px;
