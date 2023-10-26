@@ -60,7 +60,7 @@
 
 <script lang="ts" setup>
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-  import { clamp, adjust } from '@/utils/index';
+  // import { clamp, adjust } from '@/utils/index';
   import useSpring from '@/hooks/useSpring';
   import errImg from '@/assets/err_img.png';
 
@@ -214,6 +214,16 @@
       spGlare.set({ x: 0, y: 0, o: 0 }, { hard: true });
     }
   });
+
+  /** 限制最大最小值 */
+  const clamp = (val: number, min = 0, max = 100) => {
+    return Math.min(Math.max(val, min), max);
+  };
+
+  /** 根据指定范围映射新值 */
+  const adjust = (val: number, fromMin: number, fromMax: number, toMin: number, toMax: number) => {
+    return toMin + ((toMax - toMin) * (val - fromMin)) / (fromMax - fromMin);
+  };
 
   /** 鼠标在卡上移动 */
   const handleInteract = (e: PointerEvent) => {
