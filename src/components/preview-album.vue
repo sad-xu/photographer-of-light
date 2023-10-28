@@ -8,7 +8,7 @@
       <div>descdescdesc</div>
     </div>
     <div class="album-body">
-      <div class="comment-area"></div>
+      <comment-part class="comment-area"></comment-part>
       <div class="preview-area">
         <div class="photo-header" :style="{ transform: `translate(${offset.x}px,${offset.y}px)` }">
           <span class="photo-title">照片标题标题</span>
@@ -43,6 +43,7 @@
           </div>
         </div>
       </div>
+      <setting-part class="setting-area"></setting-part>
     </div>
   </div>
 </template>
@@ -50,6 +51,8 @@
 <script lang="ts" setup>
   import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
   import CustomCard from './custom-card.vue';
+  import CommentPart from './comment-part.vue';
+  import SettingPart from './setting-part.vue';
 
   const timeId = ref(0);
   // 鼠标位移
@@ -68,24 +71,31 @@
   const bgUrl = ref('');
 
   photoList.value = [
-    'ffxiv_dx11 2023-06-24 22-28-46.png',
-    'ffxiv_dx11 2023-10-02 21-22-49.png',
-    'ffxiv_dx11 2023-10-02 21-24-18.png',
-    'ffxiv_dx11 2023-10-02 21-27-03.png',
-    'ffxiv_dx11 2023-10-02 21-52-22.png',
-    'ffxiv_dx11 2023-10-02 21-59-18.png',
-    'ffxiv_dx11 2023-10-02 22-17-01.png',
-    'ffxiv_dx11 2023-10-02 22-18-46.png',
-    'ffxiv_dx11 2023-10-02 22-25-13.png',
-    'ffxiv_dx11 2023-10-02 22-27-11.png',
-    'ffxiv_dx11 2023-10-02 22-30-52.png',
-    'ffxiv_dx11 2023-10-02 22-44-22.png',
-    'ffxiv_dx11 2023-10-02 22-49-45.png',
-    'ffxiv_dx11 2023-10-02 22-55-42.png',
-    'ffxiv_dx11 2023-10-02 23-03-26.png',
-    'ffxiv_dx11 2023-10-02 23-06-56.png',
-    'ffxiv_dx11 2023-10-02 23-09-25.png',
-    'ffxiv_dx11 2023-10-02 23-13-21.png',
+    'cdn/p/ffxiv_dx11 2023-05-26 22-17-11.png',
+    'cdn/p/ffxiv_dx11 2023-05-26 23-21-48.png',
+    'cdn/p/ffxiv_dx11 2023-08-20 21-11-28.png',
+    'cdn/p/ffxiv_dx11 2023-08-22 21-54-40.png',
+    'cdn/p/ffxiv_dx11 2023-09-01 22-06-07.png',
+    'cdn/p/ffxiv_dx11 2023-09-10 11-07-54.png',
+    'cdn/p/ffxiv_dx11 2023-10-15 21-37-44.png',
+    'yixisi/album/ffxiv_dx11 2023-06-24 22-28-46.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 21-22-49.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 21-24-18.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 21-27-03.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 21-52-22.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 21-59-18.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-17-01.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-18-46.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-25-13.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-27-11.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-30-52.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-44-22.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-49-45.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 22-55-42.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 23-03-26.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 23-06-56.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 23-09-25.png',
+    'yixisi/album/ffxiv_dx11 2023-10-02 23-13-21.png',
   ].map((p) => {
     const list = p.split('dx11');
     let name = list[list.length - 1];
@@ -98,7 +108,7 @@
 
     return {
       name: name,
-      url: `https://fffff.games/yixisi/album/${p}`,
+      url: `https://fffff.games/${p}`,
     };
   });
   bgUrl.value = photoList.value[0].url;
@@ -189,15 +199,23 @@
     .comment-area {
       position: absolute;
       top: 0;
-      bottom: 120px;
+      bottom: 75px;
       left: 0;
-      width: 220px;
-      background-color: #3a3a3a;
-      opacity: 0.3;
+      background-color: #3a3a3a99;
+    }
+
+    .setting-area {
+      position: absolute;
+      top: 40%;
+      right: 0;
+      transform: translateY(-50%);
     }
 
     .preview-area {
       z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
       .photo-header {
         position: relative;
@@ -234,6 +252,7 @@
         justify-content: center;
         width: 100%;
         padding-top: 8px;
+        padding-bottom: 40px;
         transition: transform 0.1s;
 
         .desc {

@@ -2,6 +2,12 @@
 
 一个专为FF14打造的照片分享网站
 
+## 前端本地打包发布
+
+```bash
+tcb hosting deploy ./dist/ p/ -e event-5gdjtgwpc8ae552d
+```
+
 ## 特色
 
 * FF14 only

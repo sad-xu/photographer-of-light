@@ -31,22 +31,21 @@ body {
   background: #0c4e6f;
 }
 
-// ::-webkit-scrollbar {
-//   width: 6px;
-//   height: 6px;
-// }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-// ::-webkit-scrollbar-track {
-//   background: rgb(0 0 0 / 20%);
-//   border-radius: 4px;
-// }
+::-webkit-scrollbar-track {
+  background: rgb(0 0 0 / 20%);
+  border-radius: 4px;
+}
 
-// ::-webkit-scrollbar-thumb {
-//   background-color: #686868;
-//   border-radius: 4px;
+::-webkit-scrollbar-thumb {
+  background-color: #686868;
+  border-radius: 4px;
 
-//   &:hover {
-//     background-color: rgb(144 147 153 / 50%);
-//   }
-// }
-
+  &:hover {
+    background-color: rgb(144 147 153 / 50%);
+  }
+}

@@ -60,7 +60,6 @@
 
 <script lang="ts" setup>
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
-  // import { clamp, adjust } from '@/utils/index';
   import useSpring from '@/hooks/useSpring';
   import errImg from '@/assets/err_img.png';
 
@@ -167,8 +166,8 @@
     if (resizeTimeId.value != 0) return;
     resizeTimeId.value = window.requestAnimationFrame(() => {
       // 根据原始尺寸和屏幕尺寸，计算等比缩放后的尺寸
-      const maxWidth = window.innerWidth * 0.8;
-      const maxHeight = window.innerHeight - 160;
+      const maxWidth = window.innerWidth * 0.7;
+      const maxHeight = window.innerHeight - 200;
 
       const wRatio = maxWidth / imgInfo.originWidth;
       const hRatio = maxHeight / imgInfo.originHeight;

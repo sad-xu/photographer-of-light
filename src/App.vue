@@ -1,12 +1,16 @@
 <template>
   <div class="layout">
     <header>
+      <div @click="openSearchDialog" class="search-button">搜索</div>
       <user-space></user-space>
     </header>
     <main>
       <Transition name="fade" mode="out-in" appear>
         <preview-album></preview-album>
       </Transition>
+      <x-dialog v-model:visible="searchVisible">
+        <search-dialog></search-dialog>
+      </x-dialog>
     </main>
     <footer>
       <div>光之摄影师 v0.1.0-dev</div>
@@ -16,8 +20,18 @@
 </template>
 
 <script lang="ts" setup>
+  import { ref } from 'vue';
+  import XDialog from './common/x-dialog.vue';
   import UserSpace from './components/user-space.vue';
   import PreviewAlbum from './components/preview-album.vue';
+  import SearchDialog from './components/search-dialog.vue';
+
+  const searchVisible = ref(false);
+
+  /** 打开搜索 */
+  const openSearchDialog = () => {
+    searchVisible.value = true;
+  };
 </script>
 
 <style lang="scss" scoped>
@@ -44,6 +58,13 @@
     top: 4px;
     right: 4px;
     z-index: 2;
+    display: flex;
+    align-items: center;
+
+    .search-button {
+      margin-right: 8px;
+      cursor: pointer;
+    }
   }
 
   main {
@@ -63,6 +84,7 @@
     font-size: 12px;
 
     .heart {
+      display: inline-block;
       color: #e91e63;
       animation: beating-heart 30s linear 5s infinite;
     }
