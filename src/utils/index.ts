@@ -1,3 +1,8 @@
+export const USER_ID_KEY = 'ff-user-id';
+export const TOKEN_KEY = 'ff-token';
+export const NAME_KEY = 'ff-name';
+export const AVATAR_KEY = 'ff-avatar';
+
 const _symbols = [
   '0',
   '1',

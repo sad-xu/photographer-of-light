@@ -13,7 +13,7 @@
       </x-dialog>
     </main>
     <footer>
-      <div>光之摄影师 v0.1.0-dev</div>
+      <div @click="showMsg">光之摄影师 v0.1.0-dev</div>
       <div>Made with <span class="heart">❤</span></div>
     </footer>
   </div>
@@ -25,12 +25,18 @@
   import UserSpace from './components/user-space.vue';
   import PreviewAlbum from './components/preview-album.vue';
   import SearchDialog from './components/search-dialog.vue';
+  import createMessage from './common/message.ts';
 
   const searchVisible = ref(false);
 
   /** 打开搜索 */
   const openSearchDialog = () => {
     searchVisible.value = true;
+  };
+
+  const showMsg = () => {
+    console.log('11');
+    createMessage('message', 'success', 3000);
   };
 </script>
 

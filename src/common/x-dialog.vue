@@ -74,7 +74,7 @@
     position: fixed;
     top: 64px;
     right: 64px;
-    z-index: 1000;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -102,7 +102,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 999;
+    z-index: 99;
     display: flex;
     justify-content: center;
     width: 100vw;
