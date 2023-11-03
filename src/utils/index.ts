@@ -54,11 +54,11 @@ const _toBase = (decimal: number) => {
 
 /** 生成随机短id */
 export function generateShortId() {
-  const elapsed = Math.floor((+new Date() - 1697731200000) / 100);
+  const elapsed = Math.floor((+new Date() - 1698796800000) / 100);
   // 盐
   let salts = '';
-  const padding = '00';
-  for (let i = 0; i < 2; i++) {
+  const padding = '0';
+  for (let i = 0; i < 1; i++) {
     const salt = Math.floor(Math.random() * 3844);
     salts += (padding + _toBase(salt)).slice(-padding.length);
   }

@@ -6,8 +6,10 @@ export interface Photo {
   /** 原始宽高 */
   width: number;
   height: number;
-  /** 主色调列表 */
-  colors: string[];
+  /** 缩略图base64 */
+  thumbnail: string;
+  /** 是否已缓存 */
+  isLoaded: boolean;
 }
 
 /** 相册 */

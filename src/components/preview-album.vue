@@ -32,15 +32,11 @@
           :style="{ transform: `translate(${-offset.x / 2}px,${offset.y}px)` }"
         >
           <div class="desc">descdesc</div>
-          <div class="dot-wrapper">
-            <div
-              v-for="(_, index) in photoList"
-              :key="index"
-              class="dot"
-              :class="index == currentIndex ? 'dot-selected' : ''"
-              @click="() => togglePhotoIndex(index)"
-            ></div>
-          </div>
+          <album-pagination
+            :photo-list="photoList"
+            :default-index="currentIndex"
+            @change="togglePhotoIndex"
+          ></album-pagination>
         </div>
       </div>
       <setting-part class="setting-area"></setting-part>
@@ -53,6 +49,7 @@
   import CustomCard from './custom-card.vue';
   import CommentPart from './comment-part.vue';
   import SettingPart from './setting-part.vue';
+  import AlbumPagination from './album-pagination.vue';
 
   const timeId = ref(0);
   // 鼠标位移
@@ -150,6 +147,15 @@
     if (index != currentIndex.value) {
       currentIndex.value = index;
     }
+  };
+
+  /** 预加载图片 */
+  const preloadImg = (url: string) => {
+    let img = new Image();
+    img.src = url;
+    img.onload = () => {
+      img = null;
+    };
   };
 </script>
 
@@ -261,29 +267,6 @@
           font-family: fangsong, sans-serif;
           line-height: 1.2;
           word-break: break-all;
-        }
-
-        .dot-wrapper {
-          display: flex;
-          margin-top: 4px;
-
-          .dot {
-            width: 10px;
-            height: 10px;
-            margin-left: 12px;
-            background-color: #f3f3f3;
-            border-radius: 100%;
-            cursor: pointer;
-            transition: transform 0.3s;
-
-            &:hover {
-              transform: scale(1.3);
-            }
-          }
-
-          .dot-selected {
-            background-color: #009688;
-          }
         }
       }
     }
