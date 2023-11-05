@@ -6,7 +6,7 @@
     </header>
     <main>
       <Transition name="fade" mode="out-in" appear>
-        <preview-album></preview-album>
+        <preview-album :album-id="'1'"></preview-album>
       </Transition>
       <x-dialog v-model:visible="searchVisible">
         <search-dialog></search-dialog>

@@ -5,18 +5,11 @@ const urlAlbum = '/api/album';
 const urlMsg = '/api/msg';
 
 /** 模拟请求 */
-export function mockRequest() {
+export function mockRequest(d: any) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(1);
+      resolve(d);
     }, 800);
-  });
-}
-
-/** 1 */
-export function test() {
-  return request({
-    url: urlAlbum + '/1',
   });
 }
 

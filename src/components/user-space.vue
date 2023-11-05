@@ -1,12 +1,7 @@
 <template>
   <div class="user-space">
-    <div class="avatar" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave"></div>
-    <div
-      class="entrance"
-      :class="showEntrance ? 'entrance-show' : ''"
-      @mouseenter="handleMouseEnter"
-      @mouseleave="handleMouseLeave"
-    >
+    <div class="avatar"></div>
+    <div class="entrance">
       <div @click="createVisible = true">新建</div>
       <div
         @click="
@@ -44,21 +39,6 @@
   import CreateDialog from './create-dialog.vue';
   import AlbumDialog from './album-dialog.vue';
 
-  // popover
-  const showEntrance = ref(false);
-
-  let t = 0;
-  const handleMouseEnter = () => {
-    window.clearTimeout(t);
-    showEntrance.value = true;
-  };
-
-  const handleMouseLeave = () => {
-    t = window.setTimeout(() => {
-      showEntrance.value = false;
-    }, 300);
-  };
-
   // create
   const createVisible = ref(false);
 
@@ -81,7 +61,7 @@
 
     .entrance {
       position: absolute;
-      top: 110%;
+      top: 100%;
       left: 50%;
       display: flex;
       flex-direction: column;
@@ -101,12 +81,26 @@
           color: aquamarine;
         }
       }
+
+      &:hover {
+        transform: translateY(0) translateX(-50%);
+        opacity: 1;
+        pointer-events: initial;
+      }
     }
 
     .entrance-show {
       transform: translateY(0) translateX(-50%);
       opacity: 1;
       pointer-events: initial;
+    }
+
+    &:hover {
+      .entrance {
+        transform: translateY(0) translateX(-50%);
+        opacity: 1;
+        pointer-events: initial;
+      }
     }
   }
 </style>

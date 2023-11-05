@@ -1,6 +1,6 @@
 import { uploadErr } from '@/api/base';
 import axios, { AxiosRequestConfig } from 'axios';
-import { message } from 'components/Message';
+import createMessage from '@/common/message';
 import { TOKEN_KEY } from '@/utils';
 
 interface BaseResponse<T> {
@@ -44,10 +44,10 @@ const request = async <T = any>(config: RequestConfig): Promise<T> => {
     if (code) {
       if (code === -401) {
         // token 无效
-        message.error('需要登录哦');
+        // message.error('需要登录哦');
         // TODO: 清除本地身份
       } else if (code === -403) {
-        message.error('权限不足');
+        // message.error('权限不足');
       }
       return Promise.reject(data);
     } else return data.data;
@@ -59,7 +59,7 @@ const request = async <T = any>(config: RequestConfig): Promise<T> => {
       uploadErr('request', (err as any)?.message, JSON.stringify(config));
     }
 
-    message.error('ಥ_ಥ');
+    // message.error('ಥ_ಥ');
     return Promise.reject(err);
   }
 };

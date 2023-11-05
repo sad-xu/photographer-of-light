@@ -1,6 +1,7 @@
 /** 单张照片 */
 export interface Photo {
-  id: number;
+  id: string;
+  name: string;
   url: string;
   desc: string;
   /** 原始宽高 */
@@ -14,7 +15,7 @@ export interface Photo {
 
 /** 相册 */
 export interface Album {
-  id: number;
+  id: string;
   name: string;
   userId: string;
   userName: string;
