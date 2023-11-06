@@ -3,10 +3,10 @@
     <div class="left-arrow arrow" @click="() => togglePhoto(-1)">👈</div>
     <div class="dot-wrapper">
       <div
-        v-for="(_, index) in photoList"
+        v-for="(photo, index) in photoList"
         :key="index"
         class="dot"
-        :style="{ background: `url(${defaultBase64Data})` }"
+        :style="{ backgroundImage: `url(${photo.thumbnail})` }"
         :class="index === props.defaultIndex ? 'dot-selected' : ''"
         @click="() => emit('change', index)"
       ></div>
@@ -17,11 +17,10 @@
 
 <script lang="ts" setup>
   import { Photo } from '@/api/types';
-  const defaultBase64Data = `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAUGBwEI/8QAKRAAAgEDAwQBAwUAAAAAAAAAAQIDBAURAAYhBxITMUEIFBUyQlFhcf/EABcBAQEBAQAAAAAAAAAAAAAAAAIFAwT/xAAhEQACAgECBwAAAAAAAAAAAAAAAQIRAxIxExQhM1GB8P/aAAwDAQACEQMRAD8AsW2+rVxs60tso6mKfxkuKeRCzFFBZlDZHsBuOf61aOoPUa+Q0cr0s8duo4ESQzRsfJUGQsURSncFIQdxBI5z7yuefT7s2go+oeNx1kNrr6iGWmpLLcIfHNWntzI8YmJZ1ETkEp+1znAUgz3V/pRFt+x/hBHdrxBRU33FHXzkmPs70iELSE8yBQvs8gFsZyNXoztNs45LRHRbt0eY77u6tvFxepq3kqZmGC8zMzY+Bk6ajqvbUk9TJ5mrqGRTgwpSLUAD2CHVxnIIPIB5/wA01lx4eActkZudOiyVu27mo8NV5grmM8OQ3YWwf0OVUDuTtI+CMDGudQd9XO5zQ2ycwmjkgDOioQSSeDnOQRjjGPnORxppoPsx9lbLFXF191MluMMcdW6lBJj0WJyM844x/Ommmpz3Gtj/2Q==`;
 
   const props = defineProps<{
     // 图片列表
-    photoList: any[]; // Photo[];
+    photoList: Photo[];
     // 当前index
     defaultIndex: number;
   }>();
@@ -47,7 +46,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
     .arrow {
       width: 30px;
       height: 30px;

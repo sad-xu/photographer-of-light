@@ -3,14 +3,13 @@ export interface Photo {
   id: string;
   name: string;
   url: string;
-  desc: string;
   /** 原始宽高 */
   width: number;
   height: number;
   /** 缩略图base64 */
   thumbnail: string;
   /** 是否已缓存 */
-  isLoaded: boolean;
+  isLoaded?: boolean;
 }
 
 /** 相册 */
@@ -26,7 +25,7 @@ export interface Album {
   photos: Photo[];
   /** 标签 */
   tag: string[];
-  deleted: boolean;
+  deleted?: boolean;
 }
 
 /** 留言 */

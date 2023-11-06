@@ -1,76 +1,83 @@
 <template>
-  <div
-    id="card"
-    class="interactive"
-    :class="{
-      active: state.active,
-      interacting: state.interacting,
-    }"
-    :style="{
-      '--pointer-x': `${springGlare.x}%`,
-      '--pointer-y': `${springGlare.y}%`,
-      '--pointer-from-center': clamp(
-        Math.sqrt(
-          (springGlare.y - 50) * (springGlare.y - 50) + (springGlare.x - 50) * (springGlare.x - 50)
-        ) / 50,
-        0,
-        1
-      ),
-      '--pointer-from-top': springGlare.y / 100,
-      '--pointer-from-left': springGlare.x / 100,
-      '--card-opacity': springGlare.o,
-      '--rotate-x': `${springRotate.x + springRotateDelta.x}deg`,
-      '--rotate-y': `${springRotate.y + springRotateDelta.y}deg`,
-      '--background-x': `${springBackground.x}%`,
-      '--background-y': `${springBackground.y}%`,
-      '--card-scale': springScale,
-      '--translate-x': `${springTranslate.x}px`,
-      '--translate-y': `${springTranslate.y}px`,
-    }"
-  >
-    <div class="card__translater">
-      <div
-        class="card__rotator"
-        @click="handleActivate"
-        @pointermove="handleInteract"
-        @mouseout="handleInteractEnd"
-        @blur="handleDeactivate"
-      >
-        <!-- <img class="card__back" src="" alt="背面" loading="lazy" /> -->
-        <div class="card__front">
-          <!-- <img
+  <div class="card-wrapper">
+    <div
+      id="card"
+      class="interactive"
+      :class="{
+        active: state.active,
+        interacting: state.interacting,
+      }"
+      :style="{
+        '--pointer-x': `${springGlare.x}%`,
+        '--pointer-y': `${springGlare.y}%`,
+        '--pointer-from-center': clamp(
+          Math.sqrt(
+            (springGlare.y - 50) * (springGlare.y - 50) +
+              (springGlare.x - 50) * (springGlare.x - 50)
+          ) / 50,
+          0,
+          1
+        ),
+        '--pointer-from-top': springGlare.y / 100,
+        '--pointer-from-left': springGlare.x / 100,
+        '--card-opacity': springGlare.o,
+        '--rotate-x': `${springRotate.x + springRotateDelta.x}deg`,
+        '--rotate-y': `${springRotate.y + springRotateDelta.y}deg`,
+        '--background-x': `${springBackground.x}%`,
+        '--background-y': `${springBackground.y}%`,
+        '--card-scale': springScale,
+        '--translate-x': `${springTranslate.x}px`,
+        '--translate-y': `${springTranslate.y}px`,
+        'width': `${imgInfo.width * setting.scale}px`,
+        'height': `${imgInfo.height * setting.scale}px`,
+        'transform': `translate(${props.offset.x / 2}px,${props.offset.y / 2}px)`,
+      }"
+    >
+      <div class="card__translater">
+        <div
+          class="card__rotator"
+          @pointermove="handleInteract"
+          @mouseout="handleInteractEnd"
+          @wheel.prevent="handleWheel"
+        >
+          <!-- <img class="card__back" src="" alt="背面" loading="lazy" /> -->
+          <div class="card__front">
+            <!-- <img
             src="https://s.cn.bing.net/th?id=OHR.RomeView_ZH-CN5882212305_1920x1080.webp&qlt=50"
             loading="lazy"
             @load="handleLoadImg"
           /> -->
-          <div
-            ref="cardInnerEl"
-            class="card-inner"
-            :style="{
-              filter: imgInfo.isLoading ? 'blur(20px)' : 'none',
-            }"
-          ></div>
-          <div class="card__shine"></div>
-          <div class="card__glare"></div>
+            <div
+              ref="cardInnerEl"
+              class="card-inner"
+              :style="{
+                filter: imgInfo.isLoading ? 'blur(20px)' : 'none',
+              }"
+            ></div>
+            <div class="card__shine"></div>
+            <div class="card__glare"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- setting -->
+  <setting-part :setting="setting"></setting-part>
 </template>
 
 <script lang="ts" setup>
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
   import useSpring from '@/hooks/useSpring';
   import errImg from '@/assets/err_img.png';
+  import SettingPart from './setting-part.vue';
 
-  const props = defineProps({
+  const props = defineProps<{
     // 图片链接
-    imgUrl: {
-      type: String,
-      default: '',
-      required: true,
-    },
-  });
+    imgUrl: string;
+    // 偏移
+    offset: { x: number; y: number };
+  }>();
 
   // 通知图片渲染尺寸 - 宽度
   const emits = defineEmits<{
@@ -96,6 +103,11 @@
     height: 0,
   });
 
+  // 卡片配置
+  const setting = reactive({
+    scale: 1, // 缩放
+  });
+
   onMounted(() => {
     loadImg({
       imgUrl: props.imgUrl,
@@ -112,6 +124,7 @@
   watch(
     () => props.imgUrl,
     (url) => {
+      if (!url) return;
       imgInfo.isLoading = true;
       imgInfo.isFailed = false;
       loadImg({ imgUrl: url });
@@ -128,6 +141,7 @@
     immediate?: boolean;
     cb?: () => void;
   }) => {
+    if (!imgUrl) return;
     const t1 = +new Date();
     const imgEl = new Image();
     imgEl.src = imgUrl;
@@ -301,18 +315,25 @@
     }, delay);
   };
 
-  /** 点击激活 */
-  const handleActivate = () => {};
-
-  /** 失焦 取消激活 */
-  const handleDeactivate = () => {};
+  /** 滚轮缩放 [0.2, 3.0] */
+  const handleWheel = (e: WheelEvent) => {
+    const s = Math.min(Math.max(setting.scale + e.deltaY * -0.001, 0.2), 3);
+    setting.scale = +`${Math.round(s * 10) / 10}`.slice(0, 3);
+  };
 </script>
 
 <style lang="scss" scoped>
+  .card-wrapper {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   #card {
     z-index: 19;
     user-select: none;
-
+    transition: width 0.3s, height 0.3s;
     .card__shine {
       --shift: 1px;
       --imgsize: cover;
@@ -327,7 +348,7 @@
         ),
         radial-gradient(
           farthest-corner circle at var(--pointer-x) var(--pointer-y),
-          hsl(150deg 00% 0% / 98%) 10%,
+          hsl(150deg 0% 0% / 98%) 10%,
           hsl(0deg 0% 95% / 15%) 90%
         );
       background-position: 45% 45%, 55% 55%, center center, center center;

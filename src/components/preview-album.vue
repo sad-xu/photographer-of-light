@@ -17,21 +17,15 @@
           </a> -->
           <span>{{ photoList[currentIndex]?.name }}</span>
         </div>
-        <div
-          class="card-wrapper"
-          :style="{ width: currentWidth == 0 ? 'initital' : `${currentWidth}px` }"
-        >
-          <custom-card
-            :img-url="photoList[currentIndex]?.url"
-            :style="{ transform: `translate(${offset.x / 2}px,${offset.y / 2}px)` }"
-            @render-size="setAlbumWidth"
-          ></custom-card>
-        </div>
+        <custom-card
+          :img-url="photoList[currentIndex]?.url || ''"
+          :offset="offset"
+          @render-size="setAlbumBg"
+        ></custom-card>
         <div
           class="ablum-footer"
           :style="{ transform: `translate(${-offset.x / 2}px,${offset.y}px)` }"
         >
-          <div class="desc">descdesc</div>
           <album-pagination
             :photo-list="photoList"
             :default-index="currentIndex"
@@ -39,7 +33,6 @@
           ></album-pagination>
         </div>
       </div>
-      <setting-part class="setting-area"></setting-part>
     </div>
   </div>
 </template>
@@ -48,20 +41,23 @@
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
   import CustomCard from './custom-card.vue';
   import CommentPart from './comment-part.vue';
-  import SettingPart from './setting-part.vue';
   import AlbumPagination from './album-pagination.vue';
   import { mockRequest } from '@/api/album';
   import { Album, Photo } from '@/api/types';
+  import { mockAlbum } from '@/utils/mock';
 
   const props = defineProps<{
     albumId: string;
   }>();
 
   const timeId = ref(0);
-  // 鼠标位移
-  const offset = reactive({
+  // 窗口尺寸
+  const windowSize = reactive({
     width: window.innerWidth,
     height: window.innerHeight,
+  });
+  // 鼠标位移
+  const offset = reactive({
     x: 0,
     y: 0,
   });
@@ -70,8 +66,6 @@
   const albumInfo = ref<Partial<Album>>({});
   // 当前照片index
   const currentIndex = ref(0);
-  // 当前照片宽度
-  const currentWidth = ref(0);
   const photoList = ref<Photo[]>([]);
   const bgUrl = ref('');
 
@@ -89,73 +83,9 @@
     () => props.albumId,
     (id) => {
       if (id) {
-        mockRequest({
-          id: '11',
-          name: 'album name',
-          userName: 'author',
-          desc: 'album desc',
-          star: 9,
-          tag: [],
-          photos: [
-            {
-              id: '1',
-              url: 'cdn/p/ffxiv_dx11 2023-05-26 22-17-11.png',
-              name: '11',
-              desc: '1111',
-              width: 1920,
-              height: 1080,
-              colors: ['#101010', '#070606', '#382622', '#b48063', '#5b91c1'],
-            },
-            {
-              id: '2',
-              url: 'cdn/p/ffxiv_dx11 2023-05-26 23-21-48.png',
-              name: '22',
-              desc: '222',
-              width: 1920,
-              height: 1080,
-              colors: ['#bebcd7', '#607083', '#4e4c5c', '#999baa', '#e3ebf7'],
-            },
-            // 'cdn/p/ffxiv_dx11 2023-08-20 21-11-28.png',
-            // 'cdn/p/ffxiv_dx11 2023-08-22 21-54-40.png',
-            // 'cdn/p/ffxiv_dx11 2023-09-01 22-06-07.png',
-            // 'cdn/p/ffxiv_dx11 2023-09-10 11-07-54.png',
-            // 'cdn/p/ffxiv_dx11 2023-10-15 21-37-44.png',
-            // 'yixisi/album/ffxiv_dx11 2023-06-24 22-28-46.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 21-22-49.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 21-24-18.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 21-27-03.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 21-52-22.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 21-59-18.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-17-01.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-18-46.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-25-13.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-27-11.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-30-52.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-44-22.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-49-45.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 22-55-42.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 23-03-26.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 23-06-56.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 23-09-25.png',
-            // 'yixisi/album/ffxiv_dx11 2023-10-02 23-13-21.png',
-          ],
-        }).then((res: any) => {
+        mockRequest(mockAlbum).then((res: any) => {
           albumInfo.value = res;
-          photoList.value = res.photos.map((p: any) => {
-            // const list = p.url.split('dx11');
-            // let name = list[list.length - 1];
-            // name = name.split('.png')[0].trim();
-            // const date = name.split(' ');
-            // if (date.length === 2) {
-            //   date[1] = date[1].slice(0, 5).replace('-', ':');
-            //   name = date.join(' ');
-            // }
-
-            return {
-              ...p,
-              url: `https://fffff.games/${p.url}`,
-            };
-          });
+          photoList.value = res.photos;
           bgUrl.value = photoList.value[0].url;
         });
       }
@@ -165,23 +95,22 @@
 
   /** 更新窗口尺寸 */
   const handleResize = () => {
-    offset.width = window.innerWidth;
-    offset.height = window.innerHeight;
+    windowSize.width = window.innerWidth;
+    windowSize.height = window.innerHeight;
   };
 
   /** 根据鼠标位置计算位移 */
   const handleParallax = (e: MouseEvent) => {
     if (timeId.value != 0) return;
     timeId.value = window.requestAnimationFrame(() => {
-      offset.x = ((e.clientX - offset.width / 2) / (offset.width / 2)) * 20;
-      offset.y = ((e.clientY - offset.height / 2) / (offset.height / 2)) * 5;
+      offset.x = ((e.clientX - windowSize.width / 2) / (windowSize.width / 2)) * 20;
+      offset.y = ((e.clientY - windowSize.height / 2) / (windowSize.height / 2)) * 5;
       timeId.value = 0;
     });
   };
 
-  /** 设置相册宽度为当前图片的渲染尺寸 */
-  const setAlbumWidth = (width: number) => {
-    currentWidth.value = width;
+  /** 设置背景图 */
+  const setAlbumBg = () => {
     bgUrl.value = photoList.value[currentIndex.value]?.url;
   };
 
@@ -194,7 +123,7 @@
 
   /** 预加载图片 */
   const preloadImg = (url: string) => {
-    let img = new Image();
+    let img: HTMLImageElement | null = new Image();
     img.src = url;
     img.onload = () => {
       img = null;
@@ -253,26 +182,21 @@
       background-color: #3a3a3a99;
     }
 
-    .setting-area {
-      position: absolute;
-      top: 40%;
-      right: 0;
-      transform: translateY(-50%);
-    }
-
     .preview-area {
       z-index: 2;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      justify-content: space-between;
 
       .photo-header {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 100%;
         padding-bottom: 8px;
+        padding-top: 30px;
+        min-width: 55vw;
+        max-width: 65vw;
         font-family: cursive;
 
         .photo-title {
@@ -286,31 +210,14 @@
         }
       }
 
-      .card-wrapper {
-        display: flex;
-        flex-grow: 1;
-        align-items: center;
-        width: inherit;
-        transition: all 0.3s;
-      }
-
       .ablum-footer {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         width: 100%;
-        padding-top: 8px;
-        padding-bottom: 40px;
+        padding-bottom: 5vh;
         transition: transform 0.1s;
-
-        .desc {
-          width: 100%;
-          font-size: 14px;
-          font-family: fangsong, sans-serif;
-          line-height: 1.2;
-          word-break: break-all;
-        }
       }
     }
   }
