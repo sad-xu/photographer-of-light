@@ -214,10 +214,10 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-bottom: 8px;
-        padding-top: 30px;
         min-width: 55vw;
         max-width: 65vw;
+        padding-top: 30px;
+        padding-bottom: 8px;
         font-family: cursive;
 
         .photo-title {

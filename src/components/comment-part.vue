@@ -2,22 +2,7 @@
   <div class="comment-part">
     <div class="c-content">
       <template v-for="item in comments" :key="item._id">
-        <div class="comment">
-          <img class="avatar" :src="item.avatar" :alt="item.ownerName" />
-          <span>
-            <span class="name">{{ item.ownerName }}: </span>
-            <span class="content">{{ item.content }}</span>
-            <span class="reply-button">回复</span>
-          </span>
-        </div>
-        <div class="reply" v-for="child in item.children ?? []" :key="child._id">
-          <img class="avatar" :src="child.avatar" :alt="child.ownerName" />
-          <span>
-            <span class="name">{{ child.ownerName }}: </span>
-            <span class="content">{{ child.content }}</span>
-            <span class="reply-button">回复</span>
-          </span>
-        </div>
+        <comment-item :comment="item" type="comment"></comment-item>
       </template>
     </div>
     <div class="c-input">
@@ -32,6 +17,7 @@
 <script lang="ts" setup>
   import { Comment } from '@/api/types';
   import { ref, watch } from 'vue';
+  import CommentItem from './comment-item.vue';
 
   const props = defineProps<{
     // 评论列表
@@ -58,8 +44,8 @@
     const list: Comment[] = [];
     const map: { [_: string]: Comment } = {};
     clist.forEach((item) => {
+      map[item._id] = item;
       if (!item.replyId) {
-        map[item._id] = item;
         list.push(item);
       } else {
         const target = map[item.replyId];
@@ -88,60 +74,22 @@
     left: 0;
     display: flex;
     flex-direction: column;
-    width: 150px;
-    opacity: 0.3;
-    transition: all 0.3s;
     justify-content: flex-end;
+    width: 150px;
+    overflow: hidden;
+    background-color: #3a3a3a99;
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
-    background-color: #3a3a3a99;
-    overflow: hidden;
+    opacity: 0.3;
+    transition: all 0.3s;
+
     .c-content {
-      overflow: auto;
-      word-break: break-all;
       max-height: 80vh;
-      font-size: 14px;
       padding: 4px 0;
+      overflow: auto;
+      font-size: 14px;
       line-height: 20px;
-      .comment,
-      .reply {
-        padding: 4px;
-        .avatar {
-          width: 20px;
-          height: 20px;
-          border-radius: 100%;
-          margin-right: 4px;
-        }
-        .name {
-          display: inline-block;
-          width: 0;
-          height: 0;
-          overflow: hidden;
-          color: #c5c5c5;
-          margin-right: 4px;
-        }
-        .content {
-        }
-        .reply-button {
-          display: inline-block;
-          width: 0;
-          height: 0;
-          overflow: hidden;
-          opacity: 0;
-          font-size: 12px;
-          color: #abcdff;
-          transition: opacity 0.3s;
-          cursor: pointer;
-        }
-        &:hover {
-          .reply-button {
-            opacity: 1;
-          }
-        }
-      }
-      .reply {
-        padding-left: 20px;
-      }
+      word-break: break-all;
     }
 
     .c-input {
@@ -154,6 +102,7 @@
         padding: 0 4px;
         border: 1px solid transparent;
         transition: all 0.15s;
+
         &:focus {
           border-color: #2196f3;
           box-shadow: inset 0 0 4px #4da2c9;
@@ -162,20 +111,23 @@
 
       .send-button {
         flex-shrink: 0;
-        border: none;
         padding: 0 8px;
         color: #fff;
         font-size: 12px;
-        background-color: rgb(22, 93, 255);
+        background-color: rgb(22 93 255);
+        border: none;
         cursor: pointer;
         transition: padding 0.3s;
+
         &:hover {
-          background-color: rgb(64, 128, 255);
+          background-color: rgb(64 128 255);
         }
+
         &:active {
-          background-color: rgb(14, 66, 210);
+          background-color: rgb(14 66 210);
         }
       }
+
       .send-button-loading {
         pointer-events: none;
       }
@@ -186,24 +138,22 @@
       width: 220px;
       opacity: 1;
 
-      .c-content {
-        .comment,
-        .reply {
-          .name {
-            animation: comment-name 0.5s;
-            animation-fill-mode: forwards;
-          }
-          .reply-button {
-            animation: comment-reply-button 0.5s;
-            animation-fill-mode: forwards;
-          }
+      .c-content :deep {
+        .name {
+          animation: comment-name 0.5s;
+          animation-fill-mode: forwards;
+        }
+
+        .reply-button {
+          animation: comment-reply-button 0.5s;
+          animation-fill-mode: forwards;
         }
       }
 
       .c-input {
         .send-button {
-          padding-left: 12px;
           padding-right: 12px;
+          padding-left: 12px;
         }
       }
     }
@@ -212,14 +162,15 @@
   @keyframes comment-name {
     0% {
       width: 0;
-      opacity: 0;
       height: 0;
+      opacity: 0;
     }
+
     100% {
-      opacity: 1;
       width: initial;
       height: initial;
       overflow: visible;
+      opacity: 1;
     }
   }
 
@@ -228,6 +179,7 @@
       width: 0;
       height: 0;
     }
+
     100% {
       width: initial;
       height: initial;
