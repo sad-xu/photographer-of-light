@@ -8,20 +8,24 @@
       <div>{{ albumInfo.desc }}</div>
     </div>
     <div class="album-body">
-      <comment-part class="comment-area"></comment-part>
+      <!-- 评论区 -->
+      <comment-part :comment-list="commentList"></comment-part>
       <div class="preview-area">
+        <!-- header -->
         <div class="photo-header" :style="{ transform: `translate(${offset.x}px,${offset.y}px)` }">
-          <span class="photo-title">照片标题标题</span>
+          <span class="photo-title">{{ albumInfo.name }}</span>
           <!-- <a :href="photoList[currentIndex].url" target="_blank" class="photo-header-right">
             原图
           </a> -->
           <span>{{ photoList[currentIndex]?.name }}</span>
         </div>
+        <!-- 照片展示区 -->
         <custom-card
           :img-url="photoList[currentIndex]?.url || ''"
           :offset="offset"
           @render-size="setAlbumBg"
         ></custom-card>
+        <!-- footer -->
         <div
           class="ablum-footer"
           :style="{ transform: `translate(${-offset.x / 2}px,${offset.y}px)` }"
@@ -43,7 +47,7 @@
   import CommentPart from './comment-part.vue';
   import AlbumPagination from './album-pagination.vue';
   import { mockRequest } from '@/api/album';
-  import { Album, Photo } from '@/api/types';
+  import { Album, Photo, Comment } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
 
   const props = defineProps<{
@@ -63,10 +67,23 @@
   });
 
   // 当前相册信息
-  const albumInfo = ref<Partial<Album>>({});
+  const albumInfo = reactive<Partial<Album>>({
+    id: '',
+    name: '',
+    userId: '',
+    userName: '',
+    desc: '',
+    star: 0,
+    createTime: 0,
+    updateTime: 0,
+    tags: [],
+  });
+  const photoList = ref<Photo[]>([]);
+  const commentList = ref<Comment[]>([]);
+
   // 当前照片index
   const currentIndex = ref(0);
-  const photoList = ref<Photo[]>([]);
+  // 背景图
   const bgUrl = ref('');
 
   onMounted(() => {
@@ -83,10 +100,22 @@
     () => props.albumId,
     (id) => {
       if (id) {
+        // 获取相册信息+评论
         mockRequest(mockAlbum).then((res: any) => {
-          albumInfo.value = res;
+          albumInfo.id = res.id;
+          albumInfo.name = res.name;
+          albumInfo.userId = res.userId;
+          albumInfo.userName = res.userName;
+          albumInfo.desc = res.desc;
+          albumInfo.star = res.star;
+          albumInfo.createTime = res.createTime;
+          albumInfo.updateTime = res.updateTime;
+          albumInfo.tags = res.tags;
           photoList.value = res.photos;
-          bgUrl.value = photoList.value[0].url;
+          commentList.value = res.comments;
+          if (res.photos.length) {
+            bgUrl.value = res.photos[0].url;
+          }
         });
       }
     },
@@ -173,14 +202,6 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-
-    .comment-area {
-      position: absolute;
-      top: 0;
-      bottom: 75px;
-      left: 0;
-      background-color: #3a3a3a99;
-    }
 
     .preview-area {
       z-index: 2;

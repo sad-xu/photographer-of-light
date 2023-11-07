@@ -26,6 +26,20 @@ body {
   background-color: #333;
 }
 
+img {
+  border-style: none;
+}
+
+img,
+svg {
+  vertical-align: middle;
+}
+
+input,
+button {
+  outline: none;
+}
+
 ::selection {
   color: #f3f3f3;
   background: #0c4e6f;

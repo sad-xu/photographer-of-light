@@ -23,24 +23,28 @@ export interface Album {
   createTime: number;
   updateTime: number;
   photos: Photo[];
+  comments: Comment[];
   /** 标签 */
-  tag: string[];
+  tags: string[];
   deleted?: boolean;
 }
 
 /** 留言 */
-export interface Msg {
+export interface Comment {
   _id: string;
-  /** 被回复 相册|照片 id */
-  id: number;
+  /** 被回复的相册id */
+  id: string;
+  /** 回复人信息 */
   ownerId: string;
   ownerName: string;
   avatar: string;
   content: string;
   t: number;
-  deleted: boolean;
+  deleted?: boolean;
   /** 被回复的留言id */
   replyId?: string;
+  /** 显示用 */
+  children?: Comment[];
 }
 
 /**
