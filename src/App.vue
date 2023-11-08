@@ -20,14 +20,28 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue';
+  import { ref, reactive, provide } from 'vue';
   import XDialog from './common/x-dialog.vue';
   import UserSpace from './components/user-space.vue';
   import PreviewAlbum from './components/preview-album.vue';
   import SearchDialog from './components/search-dialog.vue';
   import createMessage from './common/message.ts';
+  import { USER_ID_KEY, NAME_KEY, AVATAR_KEY } from '@/utils';
+  import { STORE_NAME, STORE_USER_ID, STORE_AVATAR } from './provide';
 
   const searchVisible = ref(false);
+
+  const userInfo = reactive({
+    userId: window.localStorage.getItem(USER_ID_KEY) || '123',
+    name: window.localStorage.getItem(NAME_KEY) || 'testName',
+    avatar:
+      window.localStorage.getItem(AVATAR_KEY) ||
+      'https://p9-passport.byteacctimg.com/img/user-avatar/43bae177b0e70454e80529f2c9ea5295~50x50.awebp',
+  });
+
+  provide(STORE_USER_ID, userInfo.userId);
+  provide(STORE_NAME, userInfo.name);
+  provide(STORE_AVATAR, userInfo.avatar);
 
   /** 打开搜索 */
   const openSearchDialog = () => {

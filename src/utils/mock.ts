@@ -3,7 +3,7 @@ import { Album, Comment, Photo } from '@/api/types';
 export const mockPhotos: Photo[] = [
   {
     id: '1',
-    name: '11',
+    name: '2023-05-26 22-17-11',
     url: 'https://fffff.games/cdn/p/ffxiv_dx11 2023-05-26 22-17-11.png',
     width: 1920,
     height: 1080,
@@ -12,7 +12,7 @@ export const mockPhotos: Photo[] = [
   },
   {
     id: '2',
-    name: '22',
+    name: '2023-05-26 23-21-48',
     url: 'https://fffff.games/cdn/p/ffxiv_dx11 2023-05-26 23-21-48.png',
     width: 1920,
     height: 1080,
@@ -21,7 +21,7 @@ export const mockPhotos: Photo[] = [
   },
   {
     id: '3',
-    name: '33',
+    name: '2023-08-20 21-11-28',
     url: 'https://fffff.games/cdn/p/ffxiv_dx11 2023-08-20 21-11-28.png',
     width: 1920,
     height: 1080,
@@ -30,7 +30,7 @@ export const mockPhotos: Photo[] = [
   },
   {
     id: '4',
-    name: '44',
+    name: '2023-08-22 21-54-40',
     url: 'https://fffff.games/cdn/p/ffxiv_dx11 2023-08-22 21-54-40.png',
     width: 1920,
     height: 1080,
@@ -124,7 +124,7 @@ export const mockCommonts: Comment[] = [
     replyId: 'id4',
     avatar:
       'https://p26-passport.byteacctimg.com/img/user-avatar/92461f1c52036b2166e3faa1f523e8d5~50x50.awebp',
-    content: '111好看好看！',
+    content: '1好看好看！',
     t: 1699322089,
   },
 ];

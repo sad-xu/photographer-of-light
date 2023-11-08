@@ -13,11 +13,11 @@
       <div class="preview-area">
         <!-- header -->
         <div class="photo-header" :style="{ transform: `translate(${offset.x}px,${offset.y}px)` }">
-          <span class="photo-title">{{ albumInfo.name }}</span>
+          <!-- <span class="photo-title">{{ photoList[currentIndex]?.name }}</span> -->
           <!-- <a :href="photoList[currentIndex].url" target="_blank" class="photo-header-right">
             原图
           </a> -->
-          <span>{{ photoList[currentIndex]?.name }}</span>
+          <span class="photo-title">{{ photoList[currentIndex]?.name }}</span>
         </div>
         <!-- 照片展示区 -->
         <custom-card
@@ -210,24 +210,16 @@
       justify-content: space-between;
 
       .photo-header {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
         min-width: 55vw;
         max-width: 65vw;
         padding-top: 30px;
         padding-bottom: 8px;
         font-family: cursive;
+        text-align: center;
 
         .photo-title {
           font-weight: bold;
           font-size: 24px;
-        }
-
-        .photo-header-right {
-          color: #9e9e9e;
-          font-size: 14px;
         }
       }
 

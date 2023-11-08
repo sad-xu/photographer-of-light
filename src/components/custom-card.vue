@@ -325,15 +325,16 @@
 <style lang="scss" scoped>
   .card-wrapper {
     position: fixed;
-    left: 50%;
     top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
   }
 
   #card {
     z-index: 19;
-    user-select: none;
     transition: width 0.3s, height 0.3s;
+    user-select: none;
+
     .card__shine {
       --shift: 1px;
       --imgsize: cover;
