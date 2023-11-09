@@ -6,14 +6,14 @@
       <del v-if="comment.deleted">已删除</del>
       <span v-else>{{ comment.content }}</span>
       <span
-        v-if="comment.ownerId != storeUserId && !comment.deleted"
+        v-if="comment.ownerId != store._id && !comment.deleted"
         class="reply-button"
         @click="() => emits('reply', comment)"
       >
         回复
       </span>
       <span
-        v-if="comment.ownerId == storeUserId && !comment.deleted"
+        v-if="comment.ownerId == store._id && !comment.deleted"
         class="reply-button delete-button"
         @click="() => emits('delete', comment)"
       >
@@ -28,10 +28,9 @@
 
 <script lang="ts" setup>
   import { Comment } from '@/api/types';
-  import { STORE_USER_ID } from '@/provide';
-  import { inject } from 'vue';
+  import useStore from '@/store/app';
 
-  const storeUserId = inject(STORE_USER_ID);
+  const store = useStore();
 
   defineProps<{
     comment: Comment;

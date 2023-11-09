@@ -50,13 +50,11 @@
 
 <script lang="ts" setup>
   import { Comment } from '@/api/types';
-  import { ref, watch, inject, nextTick } from 'vue';
+  import { ref, watch, nextTick } from 'vue';
   import CommentItem from './comment-item.vue';
-  import { STORE_NAME, STORE_AVATAR, STORE_USER_ID } from '@/provide';
+  import useStore from '@/store/app';
 
-  const storeUserId = inject(STORE_USER_ID);
-  const storeName = inject(STORE_NAME);
-  const storeAvatar = inject(STORE_AVATAR);
+  const store = useStore();
 
   const props = defineProps<{
     // 评论列表
@@ -133,10 +131,10 @@
       const newComment = {
         _id: cId,
         id: cId,
-        ownerId: storeUserId ?? '',
-        ownerName: storeName ?? '',
+        ownerId: store._id,
+        ownerName: store.name,
         replyId: replyId,
-        avatar: storeAvatar ?? '',
+        avatar: store.avatar,
         content: str,
         t: +new Date(),
       };

@@ -1,8 +1,8 @@
 <template>
   <div class="user-space">
-    <div class="avatar"></div>
+    <img class="avatar" :src="store.avatar" />
     <div class="entrance-wrapper">
-      <div class="entrance" data-name="新建相册" @click="createVisible = true">
+      <div class="entrance" data-name="新建相册" @click="store.openEdit()">
         <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M512 62c-248.4 0-450 201.6-450 450s201.6 450 450 450 450-201.6 450-450-201.6-450-450-450zM725.282 544.733h-172.602v172.611c0 20.753-17.487 38.232-38.242 38.232-20.753 0-38.232-17.478-38.232-38.232v-172.611h-172.62c-20.745 0-38.232-17.478-38.232-38.232 0-20.764 17.487-38.242 38.242-38.242h172.611v-172.611c0-20.753 17.478-38.232 38.232-38.232s38.242 17.478 38.242 38.232v172.62h172.602c20.764 0 38.242 17.469 38.242 38.232 0 21.843-17.478 38.232-38.242 38.232z"
@@ -39,8 +39,8 @@
       </div>
     </div>
     <!-- 新建|编辑 -->
-    <x-dialog v-model:visible="createVisible">
-      <create-dialog></create-dialog>
+    <x-dialog v-model:visible="store.editVisible" hideClose>
+      <edit-dialog></edit-dialog>
     </x-dialog>
     <!-- 相册列表 -->
     <x-dialog v-model:visible="albumVisible">
@@ -52,11 +52,11 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import XDialog from '@/common/x-dialog.vue';
-  import CreateDialog from './create-dialog.vue';
+  import EditDialog from '../edit-dialog.vue';
   import AlbumDialog from './album-dialog.vue';
+  import useStore from '@/store/app';
 
-  // create
-  const createVisible = ref(false);
+  const store = useStore();
 
   // 我的相册 我的喜欢
   const albumVisible = ref(false);

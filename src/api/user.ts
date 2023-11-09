@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { Msg } from './types';
+import { Comment } from './types';
 
 const urlUser = '/api/user';
 const urlMsg = '/api/msg';
@@ -24,7 +24,7 @@ export function changeName(newName: string) {
 
 /** 获取自己的留言列表 */
 export function fetchUserMsg() {
-  return request<Msg[]>({
+  return request<Comment[]>({
     url: urlMsg + '/user',
   });
 }
