@@ -22,8 +22,8 @@
 <script lang="ts" setup>
   import { ref, reactive, provide } from 'vue';
   import XDialog from './common/x-dialog.vue';
-  import UserSpace from './components/user-space.vue';
-  import PreviewAlbum from './components/preview-album.vue';
+  import UserSpace from './components/user-space/index.vue';
+  import PreviewAlbum from './components/preview-album/index.vue';
   import SearchDialog from './components/search-dialog.vue';
   import createMessage from './common/message.ts';
   import { USER_ID_KEY, NAME_KEY, AVATAR_KEY } from '@/utils';

@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { Album, Msg } from './types';
+import { Album, Comment } from './types';
 
 const urlAlbum = '/api/album';
 const urlMsg = '/api/msg';
@@ -57,7 +57,7 @@ export function searchAlbum(params: any) {
 
 /** 获取留言 相册|照片 */
 export function fetchMsg(id: string) {
-  return request<Msg[]>({
+  return request<Comment[]>({
     url: urlMsg + '/' + id,
   });
 }

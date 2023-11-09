@@ -19,7 +19,12 @@ export interface Album {
   userId: string;
   userName: string;
   desc: string;
+  /** 点赞数 */
   star: number;
+  /** 照片数 */
+  photoNum: number;
+  /** 评论数 */
+  commentNum: number;
   createTime: number;
   updateTime: number;
   photos: Photo[];

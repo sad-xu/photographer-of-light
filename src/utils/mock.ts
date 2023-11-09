@@ -136,6 +136,8 @@ export const mockAlbum: Album = {
   userName: '虚拟用户1',
   desc: 'desc',
   star: 0,
+  photoNum: 9,
+  commentNum: 12,
   createTime: 1698843600,
   updateTime: 1699716600,
   photos: mockPhotos,
