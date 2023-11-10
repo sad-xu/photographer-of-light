@@ -9,7 +9,7 @@
       </svg>
     </div>
     <transition name="dialog-fade">
-      <div v-show="value" class="ky-dialog">
+      <div v-show="value" class="ky-dialog" :style="{ paddingTop: props.top }">
         <slot v-if="contentVisible"></slot>
       </div>
     </transition>
@@ -24,6 +24,8 @@
     visible: boolean;
     // 是否隐藏右上角
     hideClose?: boolean;
+    // padding-top
+    top?: string;
   }>();
 
   const emit = defineEmits<{

@@ -13,8 +13,8 @@
         <search-dialog></search-dialog>
       </x-dialog>
       <!-- 新建|编辑 -->
-      <x-dialog v-model:visible="editVisible">
-        <edit-dialog></edit-dialog>
+      <x-dialog v-model:visible="store.editVisible" hideClose top="20vh">
+        <edit-content></edit-content>
       </x-dialog>
     </main>
     <footer>
@@ -30,11 +30,12 @@
   import UserSpace from './components/user-space/index.vue';
   import PreviewAlbum from './components/preview-album/index.vue';
   import SearchDialog from './components/search-dialog.vue';
-  import EditDialog from './components/edit-dialog.vue';
+  import EditContent from './components/edit-content/index.vue';
   import createMessage from './common/message.ts';
+  import useStore from '@/store/app';
 
+  const store = useStore();
   const searchVisible = ref(false);
-  const editVisible = ref(false);
 
   /** 打开搜索 */
   const openSearchDialog = () => {

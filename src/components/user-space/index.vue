@@ -38,10 +38,6 @@
         </svg>
       </div>
     </div>
-    <!-- 新建|编辑 -->
-    <x-dialog v-model:visible="store.editVisible" hideClose>
-      <edit-dialog></edit-dialog>
-    </x-dialog>
     <!-- 相册列表 -->
     <x-dialog v-model:visible="albumVisible">
       <album-dialog :type="albumType"></album-dialog>
@@ -52,7 +48,6 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import XDialog from '@/common/x-dialog.vue';
-  import EditDialog from '../edit-dialog.vue';
   import AlbumDialog from './album-dialog.vue';
   import useStore from '@/store/app';
 
