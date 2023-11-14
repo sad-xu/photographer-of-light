@@ -19,8 +19,12 @@
         <preview-album :album-id="'1'"></preview-album>
       </Transition>
       <!-- 搜索 -->
-      <x-dialog v-model:visible="searchVisible">
-        <search-dialog></search-dialog>
+      <x-dialog
+        v-model:visible="searchVisible"
+        :innerStyle="{ paddingTop: 0, alignItems: 'center' }"
+        keepAlive
+      >
+        <search-content></search-content>
       </x-dialog>
       <!-- 新建|编辑 -->
       <x-dialog
@@ -43,7 +47,7 @@
   import XDialog from './common/x-dialog.vue';
   import UserSpace from './components/user-space/index.vue';
   import PreviewAlbum from './components/preview-album/index.vue';
-  import SearchDialog from './components/search-dialog.vue';
+  import SearchContent from './components/search-content/index.vue';
   import EditContent from './components/edit-content/index.vue';
   import createMessage from './common/message.ts';
   import useStore from '@/store/app';

@@ -1,16 +1,21 @@
 <template>
   <Teleport to="body">
+    <div v-if="value && !hideClose" class="ky-dialog-close-btn" @click="handleClose">
+      <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <path
+          d="M18.0036140625,15.992871875L26.6702140625,24.659471875L24.6702140625,26.659471875L16.0036140625,17.992871875L7.3369140625,26.659471875L5.3369140625,24.659471875L14.0035740625,15.992871875L5.3369140625,7.326171875L7.3369140625,5.326171875L16.0036140625,13.992831875L24.6702140625,5.326171875L26.6702140625,7.326171875L18.0036140625,15.992871875Z"
+          fill="#FFF"
+        />
+      </svg>
+    </div>
     <transition name="dialog-fade">
       <div v-show="value" class="ky-dialog" :style="innerStyle">
-        <div v-if="value && !hideClose" class="ky-dialog-close-btn" @click="handleClose">
-          <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-            <path
-              d="M18.0036140625,15.992871875L26.6702140625,24.659471875L24.6702140625,26.659471875L16.0036140625,17.992871875L7.3369140625,26.659471875L5.3369140625,24.659471875L14.0035740625,15.992871875L5.3369140625,7.326171875L7.3369140625,5.326171875L16.0036140625,13.992831875L24.6702140625,5.326171875L26.6702140625,7.326171875L18.0036140625,15.992871875Z"
-              fill="#FFF"
-            />
-          </svg>
-        </div>
-        <slot v-if="contentVisible"></slot>
+        <template v-if="keepAlive">
+          <slot></slot>
+        </template>
+        <template v-else>
+          <slot v-if="contentVisible"></slot>
+        </template>
       </div>
     </transition>
   </Teleport>
@@ -26,6 +31,8 @@
     hideClose?: boolean;
     // custom style
     innerStyle?: StyleValue;
+    // keep-alive
+    keepAlive?: boolean;
   }>();
 
   const emit = defineEmits<{
