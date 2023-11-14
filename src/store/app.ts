@@ -24,7 +24,7 @@ export const useStore = defineStore('app', {
     name: window.localStorage.getItem(NAME_KEY) || 'testName',
     avatar:
       window.localStorage.getItem(AVATAR_KEY) ||
-      'https://p9-passport.byteacctimg.com/img/user-avatar/43bae177b0e70454e80529f2c9ea5295~50x50.awebp',
+      'https://i1.hdslb.com/bfs/face/bf80ff5f3ce928757f766057fbde3d723e88f0ac.jpg@96w_96h',
     token: window.localStorage.getItem(TOKEN_KEY) || 'aaa',
     // 编辑状态
     editVisible: false,
