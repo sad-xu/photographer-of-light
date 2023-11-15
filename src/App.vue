@@ -16,7 +16,10 @@
     </header>
     <main>
       <Transition name="fade" mode="out-in" appear>
-        <preview-album :album-id="'1'"></preview-album>
+        <KeepAlive>
+          <home-content v-if="!store.detailId"></home-content>
+          <preview-album v-else="store.detailId" :album-id="store.detailId"></preview-album>
+        </KeepAlive>
       </Transition>
       <!-- 搜索 -->
       <x-dialog
@@ -24,7 +27,7 @@
         :innerStyle="{ paddingTop: 0, alignItems: 'center' }"
         keepAlive
       >
-        <search-content></search-content>
+        <search-content @close="closeSearchDialog"></search-content>
       </x-dialog>
       <!-- 新建|编辑 -->
       <x-dialog
@@ -49,6 +52,7 @@
   import PreviewAlbum from './components/preview-album/index.vue';
   import SearchContent from './components/search-content/index.vue';
   import EditContent from './components/edit-content/index.vue';
+  import HomeContent from './components/home/index.vue';
   import createMessage from './common/message.ts';
   import useStore from '@/store/app';
 
@@ -60,9 +64,15 @@
     searchVisible.value = true;
   };
 
+  /** 选中相册+关闭搜索 */
+  const closeSearchDialog = (id: string) => {
+    store.setDetailId(id);
+    searchVisible.value = false;
+  };
+
   const showMsg = () => {
-    console.log('11');
     createMessage('message', 'success', 3000);
+    store.setDetailId(store.detailId ? '' : '123');
   };
 </script>
 
