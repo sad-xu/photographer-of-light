@@ -180,7 +180,7 @@
     padding: 24px 0 12px 24px;
     background-color: #1e1e1e66;
     border-radius: 8px;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(2px);
 
     .board {
       display: flex;

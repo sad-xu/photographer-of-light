@@ -17,6 +17,15 @@ export interface AppState extends UserInfo, EditConfig {
   detailId: string;
 }
 
+const searchUrl = window.location.search;
+let defaultDetailId = '';
+if (searchUrl) {
+  const arr = searchUrl.split('album=');
+  if (arr.length > 1) {
+    defaultDetailId = arr[1].split('&')[0];
+  }
+}
+
 export const useStore = defineStore('app', {
   state: (): AppState => ({
     // 个人信息
@@ -30,7 +39,7 @@ export const useStore = defineStore('app', {
     editVisible: false,
     editId: '',
     // 当前详情id
-    detailId: '',
+    detailId: defaultDetailId,
   }),
   getters: {
     userInfo(state: UserInfo) {
@@ -67,6 +76,9 @@ export const useStore = defineStore('app', {
     // 设置详情id
     setDetailId(id: string) {
       this.detailId = id;
+      const location = window.location;
+      const url = location.origin + location.pathname + (id ? `?album=${id}` : '');
+      window.history.pushState({}, '', url);
     },
     // 点赞
     // 取消点赞

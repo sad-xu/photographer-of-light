@@ -63,7 +63,11 @@
   </div>
 
   <!-- setting -->
-  <setting-part :setting="setting"></setting-part>
+  <setting-part
+    :setting="setting"
+    :img-url="props.imgUrl"
+    @scale-change="handleScaleChange"
+  ></setting-part>
 </template>
 
 <script lang="ts" setup>
@@ -317,7 +321,12 @@
 
   /** 滚轮缩放 [0.2, 3.0] */
   const handleWheel = (e: WheelEvent) => {
-    const s = Math.min(Math.max(setting.scale + e.deltaY * -0.001, 0.2), 3);
+    handleScaleChange(e.deltaY * -0.001);
+  };
+
+  /** 手动调整缩放 */
+  const handleScaleChange = (v: number) => {
+    const s = Math.min(Math.max(setting.scale + v, 0.2), 3);
     setting.scale = +`${Math.round(s * 10) / 10}`.slice(0, 3);
   };
 </script>

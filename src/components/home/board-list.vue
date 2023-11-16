@@ -48,7 +48,7 @@
               {{ formatDate(album.updateTime) }}
             </div>
           </div>
-          <div class="desc">
+          <div class="desc" @click="emit('select', album.id)">
             {{ album.desc }}
           </div>
         </div>
@@ -167,6 +167,12 @@
           text-indent: 2em;
           text-overflow: ellipsis;
           word-break: break-all;
+          cursor: pointer;
+          transition: color 0.15s;
+
+          &:hover {
+            color: #03a9f4;
+          }
 
           // display: -webkit-box;
           // overflow: hidden;
