@@ -4,6 +4,17 @@
     <div class="bg" :style="{ 'background-image': `url('${bgUrl}')` }"></div>
     <!-- 相册头部 -->
     <div class="album-header">
+      <svg
+        class="back-icon"
+        viewBox="0 0 1088 1024"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        @click="emit('back')"
+      >
+        <path
+          d="M83.648 383.232l339.776-297.28c26.304-26.24 57.024-30.656 83.328-4.352v200.448l14.656-0.064c321.024 0 559.232 228.032 559.232 538.24 0 108.032-49.536 68.672-70.208 30.976-97.408-177.92-268.608-299.328-491.584-299.328l-12.16 0.064v196.16c-26.304 26.24-60.224 23.104-83.328 4.352L83.584 478.336a67.328 67.328 0 0 1 0.064-95.104z"
+        ></path>
+      </svg>
       <span class="album-name">{{ albumInfo.name }}</span>
       <div>{{ albumInfo.desc }}</div>
     </div>
@@ -52,6 +63,10 @@
 
   const props = defineProps<{
     albumId: string;
+  }>();
+
+  const emit = defineEmits<{
+    (e: 'back'): void;
   }>();
 
   const timeId = ref(0);
@@ -188,6 +203,19 @@
     width: 100%;
     height: 44px;
     padding: 0 50px 0 8px;
+
+    .back-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      fill: #fff;
+
+      &:hover {
+        fill: #2196f3;
+      }
+    }
 
     .album-name {
       margin-right: 12px;

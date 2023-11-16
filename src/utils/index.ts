@@ -113,4 +113,26 @@ export function generateShortId() {
   return _toBase(elapsed) + salts;
 }
 
+/** 时间显示 */
+export function formatDate(t: number) {
+  const now = new Date();
+  const delta = Math.ceil((+now - t * 1000) / 1000);
+  if (delta < 0) return '未来';
+  else if (delta < 60) return '刚刚';
+  else if (delta < 3600) return `${Math.ceil(delta / 60)}分钟前`; // 1 - 59分
+  else if (delta < 86400) return `${Math.ceil(delta / 3600)}小时前`; // 1-23小时
+  else if (delta < 2592000) return `${Math.ceil(delta / 86400)}天前`; // 1-30天
+  else {
+    // xxxx年x月x日 xx:xx
+    const d = new Date(t * 1000);
+    const year = d.getFullYear();
+    const h = d.getHours();
+    const m = d.getMinutes();
+    return `${now.getFullYear() === year ? '' : year + '年'}${d.getMonth() + 1}月${d.getDate()}日 ${
+      h > 9 ? '0' + h : h
+    }:${m > 9 ? '0' + m : m}`;
+  }
+  return '';
+}
+
 export default null;

@@ -18,7 +18,11 @@
       <Transition name="fade" mode="out-in" appear>
         <KeepAlive>
           <home-content v-if="!store.detailId"></home-content>
-          <preview-album v-else="store.detailId" :album-id="store.detailId"></preview-album>
+          <preview-album
+            v-else="store.detailId"
+            :album-id="store.detailId"
+            @back="backToHome"
+          ></preview-album>
         </KeepAlive>
       </Transition>
       <!-- 搜索 -->
@@ -68,6 +72,11 @@
   const closeSearchDialog = (id: string) => {
     store.setDetailId(id);
     searchVisible.value = false;
+  };
+
+  /** 回到首页 */
+  const backToHome = () => {
+    store.setDetailId('');
   };
 
   const showMsg = () => {
