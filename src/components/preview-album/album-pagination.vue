@@ -8,7 +8,7 @@
         class="dot"
         :style="{ backgroundImage: `url(${photo.thumbnail})` }"
         :class="index === props.defaultIndex ? 'dot-selected' : ''"
-        @click="() => emit('change', index)"
+        @click="() => emits('change', index)"
       ></div>
     </div>
     <div class="right-arrow arrow" @click="() => togglePhoto(1)">👉</div>
@@ -25,7 +25,7 @@
     defaultIndex: number;
   }>();
 
-  const emit = defineEmits<{
+  const emits = defineEmits<{
     (e: 'change', v: number): void;
   }>();
 
@@ -37,7 +37,7 @@
     } else if (v >= props.photoList.length) {
       v = props.photoList.length - 1;
     }
-    return emit('change', v);
+    return emits('change', v);
   };
 </script>
 

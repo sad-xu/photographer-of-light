@@ -134,7 +134,7 @@
   import XLoading from '@/common/x-loading.vue';
   import SearchPagination from './search-pagination.vue';
 
-  const emit = defineEmits<{
+  const emits = defineEmits<{
     (e: 'close', id: string): void;
   }>();
 
@@ -211,7 +211,7 @@
 
   // 选中
   const selectAlbum = (album: Album) => {
-    emit('close', album.id);
+    emits('close', album.id);
   };
 </script>
 

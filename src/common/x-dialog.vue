@@ -13,7 +13,7 @@
         ></path>
       </svg>
     </div>
-    <transition name="dialog-fade">
+    <transition name="fade">
       <div v-show="value" class="ky-dialog" :style="innerStyle">
         <template v-if="keepAlive">
           <slot></slot>
@@ -40,7 +40,7 @@
     keepAlive?: boolean;
   }>();
 
-  const emit = defineEmits<{
+  const emits = defineEmits<{
     (e: 'update:visible', v: boolean): void;
   }>();
 
@@ -51,7 +51,7 @@
       return props.visible;
     },
     set(v) {
-      emit('update:visible', v);
+      emits('update:visible', v);
     },
   });
 
@@ -76,16 +76,6 @@
 </script>
 
 <style lang="scss" scoped>
-  .dialog-fade-enter-active,
-  .dialog-fade-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .dialog-fade-enter-from,
-  .dialog-fade-leave-to {
-    opacity: 0;
-  }
-
   .ky-dialog-close-btn {
     position: fixed;
     top: 64px;

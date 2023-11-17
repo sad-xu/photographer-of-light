@@ -9,7 +9,7 @@
         viewBox="0 0 1088 1024"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
-        @click="emit('back')"
+        @click="emits('back')"
       >
         <path
           d="M83.648 383.232l339.776-297.28c26.304-26.24 57.024-30.656 83.328-4.352v200.448l14.656-0.064c321.024 0 559.232 228.032 559.232 538.24 0 108.032-49.536 68.672-70.208 30.976-97.408-177.92-268.608-299.328-491.584-299.328l-12.16 0.064v196.16c-26.304 26.24-60.224 23.104-83.328 4.352L83.584 478.336a67.328 67.328 0 0 1 0.064-95.104z"
@@ -19,15 +19,14 @@
       <div>{{ albumInfo.desc }}</div>
     </div>
     <div class="album-body">
+      <Transition name="fade" appear>
+        <x-loading class="loading" v-if="!bgUrl"></x-loading>
+      </Transition>
       <!-- 评论区 -->
       <comment-part :comment-list="commentList"></comment-part>
       <div class="preview-area">
         <!-- header -->
         <div class="photo-header" :style="{ transform: `translate(${offset.x}px,${offset.y}px)` }">
-          <!-- <span class="photo-title">{{ photoList[currentIndex]?.name }}</span> -->
-          <!-- <a :href="photoList[currentIndex].url" target="_blank" class="photo-header-right">
-            原图
-          </a> -->
           <span class="photo-title">{{ photoList[currentIndex]?.name }}</span>
         </div>
         <!-- 照片展示区 -->
@@ -41,11 +40,14 @@
           class="ablum-footer"
           :style="{ transform: `translate(${-offset.x / 2}px,${offset.y}px)` }"
         >
-          <album-pagination
-            :photo-list="photoList"
-            :default-index="currentIndex"
-            @change="togglePhotoIndex"
-          ></album-pagination>
+          <Transition name="fade" appear>
+            <album-pagination
+              v-show="photoList.length"
+              :photo-list="photoList"
+              :default-index="currentIndex"
+              @change="togglePhotoIndex"
+            ></album-pagination>
+          </Transition>
         </div>
       </div>
     </div>
@@ -57,6 +59,7 @@
   import CustomCard from './custom-card.vue';
   import CommentPart from './comment-part.vue';
   import AlbumPagination from './album-pagination.vue';
+  import XLoading from '@/common/x-loading.vue';
   import { mockRequest } from '@/api/album';
   import { Album, Photo, Comment } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
@@ -65,7 +68,7 @@
     albumId: string;
   }>();
 
-  const emit = defineEmits<{
+  const emits = defineEmits<{
     (e: 'back'): void;
   }>();
 
@@ -128,9 +131,9 @@
           albumInfo.tags = res.tags;
           photoList.value = res.photos;
           commentList.value = res.comments;
-          if (res.photos.length) {
-            bgUrl.value = res.photos[0].url;
-          }
+          // if (res.photos.length) {
+          //   bgUrl.value = res.photos[0].url;
+          // }
         });
       }
     },
@@ -230,6 +233,11 @@
     justify-content: center;
     width: 100%;
     height: 100%;
+
+    .loading {
+      position: absolute;
+      top: 20vh;
+    }
 
     .preview-area {
       z-index: 2;

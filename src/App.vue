@@ -15,7 +15,7 @@
       <user-space></user-space>
     </header>
     <main>
-      <Transition name="fade" mode="out-in" appear>
+      <Transition name="app-fade" mode="out-in" appear>
         <KeepAlive>
           <home-content v-if="!store.detailId"></home-content>
           <preview-album
@@ -87,13 +87,13 @@
 
 <style lang="scss" scoped>
   // 切换显示|编辑
-  .fade-enter-active,
-  .fade-leave-active {
+  .app-fade-enter-active,
+  .app-fade-leave-active {
     transition: all 0.3s;
   }
 
-  .fade-enter-from,
-  .fade-leave-to {
+  .app-fade-enter-from,
+  .app-fade-leave-to {
     opacity: 0;
     filter: blur(1rem);
   }

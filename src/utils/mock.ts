@@ -64,9 +64,11 @@ export const mockPhotos: Photo[] = [
 export const mockCommonts: Comment[] = [
   {
     _id: 'id1',
-    id: '1',
-    ownerId: 'o1',
-    ownerName: '回复人1',
+    albumId: '1',
+    albumName: 'album name',
+    albumAuthorId: 'a1',
+    replierId: 'o1',
+    replierName: '回复人1',
     avatar:
       'https://p9-passport.byteacctimg.com/img/user-avatar/dd0631bfdae04026ee702667b004027d~50x50.awebp',
     content: '好看好看！',
@@ -74,9 +76,11 @@ export const mockCommonts: Comment[] = [
   },
   {
     _id: 'id2',
-    id: '1',
-    ownerId: 'o2',
-    ownerName: '回复人2',
+    albumId: '1',
+    albumName: 'album name',
+    albumAuthorId: 'a1',
+    replierId: 'o2',
+    replierName: '回复人2',
     avatar:
       'https://p26-passport.byteacctimg.com/img/user-avatar/ef01dadff9dc8a7f15eed0386b2a1720~50x50.awebp',
     content: '好看好看好看好看好看好看好看好看！',
@@ -84,9 +88,11 @@ export const mockCommonts: Comment[] = [
   },
   {
     _id: 'id3',
-    id: '1',
-    ownerId: 'o1',
-    ownerName: '回复人1',
+    albumId: '1',
+    albumName: 'album name',
+    albumAuthorId: 'a1',
+    replierId: 'o1',
+    replierName: '回复人1',
     replyId: 'id2',
     avatar:
       'https://p9-passport.byteacctimg.com/img/user-avatar/dd0631bfdae04026ee702667b004027d~50x50.awebp',
@@ -95,9 +101,11 @@ export const mockCommonts: Comment[] = [
   },
   {
     _id: 'id5',
-    id: '1',
-    ownerId: 'o4',
-    ownerName: '回复人4',
+    albumId: '1',
+    albumName: 'album name',
+    albumAuthorId: 'a1',
+    replierId: 'o4',
+    replierName: '回复人4',
     avatar:
       'https://p6-passport.byteacctimg.com/img/user-avatar/eccbd6c74379889aee23eff8569c815c~50x50.awebp',
     content: '好看好看！',
@@ -106,9 +114,11 @@ export const mockCommonts: Comment[] = [
   },
   {
     _id: 'id4',
-    id: '1',
-    ownerId: 'o3',
-    ownerName: '回复人3',
+    albumId: '1',
+    albumName: 'album name',
+    albumAuthorId: 'a1',
+    replierId: 'o3',
+    replierName: '回复人3',
     replyId: 'id2',
     avatar:
       'https://p26-passport.byteacctimg.com/img/user-avatar/92461f1c52036b2166e3faa1f523e8d5~50x50.awebp',
@@ -118,9 +128,11 @@ export const mockCommonts: Comment[] = [
   },
   {
     _id: 'id6',
-    id: '1',
-    ownerId: 'o3',
-    ownerName: '回复人3',
+    albumId: '1',
+    albumName: 'album name',
+    albumAuthorId: 'a1',
+    replierId: 'o3',
+    replierName: '回复人3',
     replyId: 'id4',
     avatar:
       'https://p26-passport.byteacctimg.com/img/user-avatar/92461f1c52036b2166e3faa1f523e8d5~50x50.awebp',

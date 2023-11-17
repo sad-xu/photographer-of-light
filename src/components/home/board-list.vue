@@ -15,7 +15,7 @@
           }"
         >
           <div class="album-header">
-            <span class="name" @click="emit('select', album.id)">{{ album.name }}</span>
+            <span class="name" @click="emits('select', album.id)">{{ album.name }}</span>
             <div class="icon-wrapper" v-if="props.type === 'likest'">
               <svg
                 class="icon"
@@ -48,7 +48,7 @@
               {{ formatDate(album.updateTime) }}
             </div>
           </div>
-          <div class="desc" @click="emit('select', album.id)">
+          <div class="desc" @click="emits('select', album.id)">
             {{ album.desc }}
           </div>
         </div>
@@ -67,7 +67,7 @@
     type: string;
   }>();
 
-  const emit = defineEmits<{
+  const emits = defineEmits<{
     (e: 'select', id: string): void;
   }>();
 </script>

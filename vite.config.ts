@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import autoprefixer from 'autoprefixer';
-// import px2rem from 'postcss-plugin-px2rem';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const isDev = process.env.NODE_ENV == 'development';
 
@@ -19,7 +19,12 @@ export default defineConfig({
       // },
     },
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    // visualizer({
+    //   open: true,
+    // }),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -36,14 +41,6 @@ export default defineConfig({
       plugins: [
         // css 前缀补全
         autoprefixer(),
-        // px2rem
-        // px2rem({
-        //   rootValue: 16, // 换算基数
-        //   unitPrecision: 3,
-        //   exclude: /(node_module)/,
-        //   mediaQuery: false,
-        //   minPixelValue: 3,
-        // }),
       ],
     },
   },

@@ -12,7 +12,7 @@
           fill="#ffffff"
         ></path>
       </svg>
-      <div class="setting-content" style="justify-content: space-between">
+      <div class="setting-content">
         <svg
           class="icon"
           viewBox="0 0 1024 1024"
@@ -25,7 +25,7 @@
             fill="#ffffff"
           ></path>
         </svg>
-        <span>{{ setting.scale }}</span>
+        <span style="min-width: 20px; text-align: center">{{ setting.scale }}</span>
         <svg
           class="icon"
           viewBox="0 0 1024 1024"

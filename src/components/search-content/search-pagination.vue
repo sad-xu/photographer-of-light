@@ -41,7 +41,7 @@
     pageSize: number;
   }>();
 
-  const emit = defineEmits<{
+  const emits = defineEmits<{
     // 当前页数改变时触发
     (e: 'change', v: number): void;
   }>();
@@ -94,7 +94,7 @@
 
   const handleClick = (i: number) => {
     if (i !== props.currentPage) {
-      emit('change', i);
+      emits('change', i);
     }
   };
 </script>

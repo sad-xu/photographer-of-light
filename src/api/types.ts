@@ -38,10 +38,14 @@ export interface Album {
 export interface Comment {
   _id: string;
   /** 被回复的相册id */
-  id: string;
+  albumId: string;
+  /** 被回复的相册名 */
+  albumName: string;
+  /** 相册作者id */
+  albumAuthorId: string;
   /** 回复人信息 */
-  ownerId: string;
-  ownerName: string;
+  replierId: string;
+  replierName: string;
   avatar: string;
   content: string;
   t: number;

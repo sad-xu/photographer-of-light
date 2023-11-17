@@ -1,19 +1,19 @@
 <template>
   <div class="comment" :class="type">
-    <img class="avatar" :src="comment.avatar" :alt="comment.ownerName" />
+    <img class="avatar" :src="comment.avatar" :alt="comment.replierName" />
     <span style="vertical-align: middle">
-      <span class="name">{{ comment.ownerName }}: </span>
+      <span class="name">{{ comment.replierName }}: </span>
       <del v-if="comment.deleted">已删除</del>
       <span v-else>{{ comment.content }}</span>
       <span
-        v-if="comment.ownerId != store._id && !comment.deleted"
+        v-if="comment.replierId != store._id && !comment.deleted"
         class="reply-button"
         @click="() => emits('reply', comment)"
       >
         回复
       </span>
       <span
-        v-if="comment.ownerId == store._id && !comment.deleted"
+        v-if="comment.replierId == store._id && !comment.deleted"
         class="reply-button delete-button"
         @click="() => emits('delete', comment)"
       >

@@ -132,7 +132,6 @@ export function formatDate(t: number) {
       h > 9 ? '0' + h : h
     }:${m > 9 ? '0' + m : m}`;
   }
-  return '';
 }
 
 export default null;
