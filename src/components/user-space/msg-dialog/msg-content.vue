@@ -15,6 +15,10 @@
         <span class="text">{{ item.content }}</span>
       </div>
     </div>
+    <div v-if="loading" class="loading">loading...</div>
+    <div class="more" v-if="showMore && !loading">
+      <span class="more-text" @click="getMsgList">查看更多</span>
+    </div>
   </div>
 </template>
 
@@ -29,26 +33,39 @@
     (e: 'select', albumId: string): void;
   }>();
 
+  const loading = ref(false);
+  const showMore = ref(false);
   const msgList = ref<Comment[]>([]);
 
   onMounted(() => {
-    console.log('init');
-    mockRequest('').then((res) => {
-      msgList.value = Array.from({ length: 20 }).map((_, i) => ({
-        _id: 'id' + i,
-        albumId: '1',
-        albumName: 'album name',
-        albumAuthorId: 'a1',
-        replierId: 'o1',
-        replierName: '回复人1',
-        replyId: Math.random() > 0.5 ? 'id4' : '',
-        avatar:
-          'https://p9-passport.byteacctimg.com/img/user-avatar/dd0631bfdae04026ee702667b004027d~50x50.awebp',
-        content: '好看好看！',
-        t: 1699322089,
-      }));
-    });
+    getMsgList();
   });
+
+  const getMsgList = () => {
+    loading.value = true;
+    mockRequest('')
+      .then((res) => {
+        msgList.value = msgList.value.concat(
+          Array.from({ length: 20 }).map((_, i) => ({
+            _id: 'id' + i,
+            albumId: '1',
+            albumName: 'album name',
+            albumAuthorId: 'a1',
+            replierId: 'o1',
+            replierName: '回复人1',
+            replyId: Math.random() > 0.5 ? 'id4' : '',
+            avatar:
+              'https://p9-passport.byteacctimg.com/img/user-avatar/dd0631bfdae04026ee702667b004027d~50x50.awebp',
+            content: '好看好看！',
+            t: 1699322089,
+          }))
+        );
+        showMore.value = true;
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  };
 
   const handleSelectAlbum = (item: Comment) => {
     emits('select', item.albumId);
@@ -69,6 +86,13 @@
     background-color: #3339;
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 0;
+    }
   }
 
   .msg {
@@ -96,6 +120,22 @@
 
       .text {
         color: #fff;
+      }
+    }
+  }
+
+  .more {
+    padding: 12px 0;
+    text-align: center;
+
+    .more-text {
+      color: #bbb;
+      font-size: 14px;
+      cursor: pointer;
+      transition: color 0.15s;
+
+      &:hover {
+        color: #03a9f4;
       }
     }
   }

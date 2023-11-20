@@ -65,7 +65,7 @@
     height: 100vh;
     overflow: hidden;
     color: #fff;
-    background-color: rgb(0 0 0 / 60%);
+    background-color: rgb(0 0 0 / 20%);
     backdrop-filter: blur(15px);
   }
 </style>
