@@ -88,7 +88,7 @@
       commentNum: 6,
       createTime: 1698843600,
       updateTime: 1699716600,
-      tags: [],
+      type: 1,
     }));
 
   onMounted(() => {

@@ -33,8 +33,19 @@
         <custom-card
           :img-url="photoList[currentIndex]?.url || ''"
           :offset="offset"
+          :setting="setting"
           @render-size="setAlbumBg"
+          @scale-change="handleScaleChange"
         ></custom-card>
+        <!-- setting -->
+        <setting-part
+          :albumId="albumInfo.id ?? ''"
+          :setting="setting"
+          :img-url="photoList[currentIndex]?.url || ''"
+          @scale-change="handleScaleChange"
+          @on-edit="handleOpenEdit"
+          @toggle-like="handleToggleLike"
+        ></setting-part>
         <!-- footer -->
         <div
           class="ablum-footer"
@@ -60,10 +71,13 @@
   import CommentPart from './comment-part.vue';
   import AlbumPagination from './album-pagination.vue';
   import XLoading from '@/common/x-loading.vue';
+  import SettingPart from './setting-part.vue';
   import { mockRequest } from '@/api/album';
   import { Album, Photo, Comment } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
+  import useStore from '@/store/app';
 
+  const store = useStore();
   const props = defineProps<{
     albumId: string;
   }>();
@@ -94,7 +108,7 @@
     star: 0,
     createTime: 0,
     updateTime: 0,
-    tags: [],
+    type: 1,
   });
   const photoList = ref<Photo[]>([]);
   const commentList = ref<Comment[]>([]);
@@ -103,6 +117,12 @@
   const currentIndex = ref(0);
   // 背景图
   const bgUrl = ref('');
+
+  // 卡片配置
+  const setting = reactive({
+    scale: 1, // 缩放
+    like: false, // 是否喜欢
+  });
 
   onMounted(() => {
     window.addEventListener('mousemove', handleParallax);
@@ -118,6 +138,8 @@
     () => props.albumId,
     (id) => {
       if (id) {
+        // 初始化是否喜欢
+        setting.like = store.collection.some((v) => v == id);
         // 获取相册信息+评论
         mockRequest(mockAlbum).then((res: any) => {
           albumInfo.id = res.id;
@@ -128,7 +150,7 @@
           albumInfo.star = res.star;
           albumInfo.createTime = res.createTime;
           albumInfo.updateTime = res.updateTime;
-          albumInfo.tags = res.tags;
+          albumInfo.type = res.type;
           photoList.value = res.photos;
           commentList.value = res.comments;
           // if (res.photos.length) {
@@ -175,6 +197,28 @@
     img.onload = () => {
       img = null;
     };
+  };
+
+  /** 手动调整缩放 */
+  const handleScaleChange = (v: number) => {
+    const s = Math.min(Math.max(setting.scale + v, 0.2), 2);
+    setting.scale = +`${Math.round(s * 10) / 10}`.slice(0, 3);
+  };
+
+  /** 打开编辑 */
+  const handleOpenEdit = () => {
+    store.openEdit();
+  };
+
+  /** 切换喜欢 */
+  const handleToggleLike = () => {
+    const flag = setting.like;
+    if (flag) {
+      store.removeCollection(props.albumId);
+    } else {
+      store.addCollection(props.albumId);
+    }
+    setting.like = !flag;
   };
 </script>
 

@@ -47,7 +47,7 @@
         updateTime: 1699515280,
         photos: [],
         comments: [],
-        tags: [],
+        type: 1,
       }))
     )
       .then((res) => {

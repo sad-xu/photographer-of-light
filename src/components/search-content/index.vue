@@ -129,7 +129,7 @@
 
 <script lang="ts" setup>
   import { mockRequest } from '@/api/album';
-  import { Album } from '@/api/types';
+  import { Album, AlbumType } from '@/api/types';
   import { reactive, ref } from 'vue';
   import XLoading from '@/common/x-loading.vue';
   import SearchPagination from './search-pagination.vue';
@@ -140,8 +140,8 @@
 
   const PHOTO_TYPE_LIST = [
     { label: '全部', value: '' },
-    { label: '人像', value: 'portrait' },
-    { label: '景物', value: 'still' },
+    { label: '人像', value: AlbumType.portrait },
+    { label: '景物', value: AlbumType.still },
   ];
 
   const showContent = ref(false);
@@ -185,7 +185,7 @@
           commentNum: 6,
           createTime: 1698843600,
           updateTime: 1699716600,
-          tags: [],
+          type: 1,
         })),
       },
       2000

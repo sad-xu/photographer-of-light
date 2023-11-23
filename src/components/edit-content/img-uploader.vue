@@ -3,6 +3,7 @@
     <div class="container">
       <img
         class="img"
+        draggable="false"
         :style="{
           transform: `rotate(${props.rotate}deg)`,
         }"
@@ -64,7 +65,7 @@
   }>();
 
   const emits = defineEmits<{
-    (e: 'upload', fileUrl: string, fileName: string): void;
+    (e: 'upload', file: File): void;
     (e: 'rotate'): void;
   }>();
 
@@ -78,7 +79,7 @@
     if (e.target.files && e.target.files.length) {
       const file = e.target.files[0];
       if (file) {
-        emits('upload', window.URL.createObjectURL(file), file.name);
+        emits('upload', file);
       }
     }
   };

@@ -153,10 +153,10 @@
               margin-right: 4px;
             }
           }
-        }
 
-        .time {
-          text-align: right;
+          .time {
+            font-size: 14px;
+          }
         }
 
         .desc {

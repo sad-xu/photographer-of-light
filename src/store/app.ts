@@ -15,6 +15,8 @@ export interface EditConfig {
 
 export interface AppState extends UserInfo, EditConfig {
   detailId: string;
+  collection: string[];
+  creation: string[];
 }
 
 const searchUrl = window.location.search;
@@ -40,6 +42,10 @@ export const useStore = defineStore('app', {
     editId: '',
     // 当前详情id
     detailId: defaultDetailId,
+    // 已收藏列表
+    collection: [],
+    // 已创建列表
+    creation: [],
   }),
   getters: {
     userInfo(state: UserInfo) {
@@ -80,8 +86,28 @@ export const useStore = defineStore('app', {
       const url = location.origin + location.pathname + (id ? `?album=${id}` : '');
       window.history.pushState({}, '', url);
     },
-    // 点赞
+    // 新增点赞
+    addCollection(id: string) {
+      this.collection.push(id);
+    },
     // 取消点赞
+    removeCollection(id: string) {
+      const i = this.collection.findIndex((v) => v === id);
+      if (i > 0) {
+        this.collection.splice(i, 1);
+      }
+    },
+    // 新增已发布
+    addCreation(id: string) {
+      this.creation.push(id);
+    },
+    // 删除已发布
+    removeCreation(id: string) {
+      const i = this.creation.findIndex((v) => v === id);
+      if (i > 0) {
+        this.creation.splice(i, 1);
+      }
+    },
   },
 });
 

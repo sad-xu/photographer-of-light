@@ -1,10 +1,36 @@
 <template>
   <div class="edit-dialog">
-    <input class="name" v-model="albumInfo.name" placeholder="相册名..." />
-    <input class="desc" v-model="albumInfo.desc" placeholder="相册简介..." />
-    <div class="photo-wrapper">
+    <div class="edit-header">
+      <input class="name" v-model="albumInfo.name" type="text" placeholder="相册名..." />
+      <div class="type-wrapper">
+        类型：
+        <input v-model="albumInfo.type" type="radio" id="portrait" :value="AlbumType.portrait" />
+        <label for="portrait">人像</label>
+        <input
+          v-model="albumInfo.type"
+          type="radio"
+          id="still"
+          :value="AlbumType.still"
+          style="margin-left: 16px"
+        />
+        <label for="still">景物</label>
+      </div>
+    </div>
+    <input class="desc" v-model="albumInfo.desc" type="text" placeholder="相册简介..." />
+    <div
+      class="photo-wrapper"
+      @dragenter="handleDragEnter"
+      @dragleave="handleDragLeave"
+      @dragover.prevent=""
+      @drop="handleDrop"
+    >
       <TransitionGroup name="list">
-        <div class="photo" v-for="(photo, i) in albumInfo.photos" :key="photo.transId">
+        <div
+          class="photo"
+          :style="{ 'pointer-events': isDrag ? 'none' : 'initial' }"
+          v-for="(photo, i) in albumInfo.photos"
+          :key="photo.transId"
+        >
           <svg
             class="delete-icon"
             @click="removePhoto(i)"
@@ -21,12 +47,47 @@
             :fileUrl="photo.fileUrl"
             :url="photo.url"
             :rotate="photo.rotate"
-            @upload="(file, name) => handleUpload(file, name, photo)"
+            @upload="(file) => handleUpload(file, photo)"
             @rotate="() => handleRotate(photo)"
           ></img-uploader>
-          <input class="photo-name" v-model="photo.name" maxlength="20" placeholder="照片名..." />
+          <input
+            class="photo-name"
+            v-model="photo.name"
+            type="text"
+            maxlength="20"
+            placeholder="照片名..."
+          />
+          <svg
+            v-if="checkExchangeVisible(i, Direction.right)"
+            class="exchange-icon right-exchange"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            @click="exchangePhoto(i, Direction.right)"
+          >
+            <path
+              d="M327.567 451.597V343.272h397.854c42.136 0 78.704 23.823 96.986 58.732 13.734-19.462 21.807-43.206 21.807-68.838 0-66.012-53.512-119.526-119.526-119.526h-397.12V104.886c0-16.012-18.056-25.367-31.136-16.133L50.85 262.108c-11.146 7.868-11.146 24.398 0 32.266L296.432 467.73c13.081 9.233 31.135-0.123 31.135-16.133zM972.16 729.645L726.577 556.29c-13.08-9.235-31.135 0.12-31.135 16.132V680.75H297.59c-42.138 0-78.706-23.823-96.987-58.732-13.735 19.462-21.807 43.206-21.807 68.836 0 66.014 53.513 119.527 119.525 119.527h397.121v108.754c0 16.011 18.056 25.366 31.135 16.132L972.16 761.912c11.145-7.87 11.145-24.4 0-32.267z"
+            ></path>
+          </svg>
+          <svg
+            v-if="checkExchangeVisible(i, Direction.bottom)"
+            class="exchange-icon bottom-exchange"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            @click="exchangePhoto(i, Direction.bottom)"
+          >
+            <path
+              d="M327.567 451.597V343.272h397.854c42.136 0 78.704 23.823 96.986 58.732 13.734-19.462 21.807-43.206 21.807-68.838 0-66.012-53.512-119.526-119.526-119.526h-397.12V104.886c0-16.012-18.056-25.367-31.136-16.133L50.85 262.108c-11.146 7.868-11.146 24.398 0 32.266L296.432 467.73c13.081 9.233 31.135-0.123 31.135-16.133zM972.16 729.645L726.577 556.29c-13.08-9.235-31.135 0.12-31.135 16.132V680.75H297.59c-42.138 0-78.706-23.823-96.987-58.732-13.735 19.462-21.807 43.206-21.807 68.836 0 66.014 53.513 119.527 119.525 119.527h397.121v108.754c0 16.011 18.056 25.366 31.135 16.132L972.16 761.912c11.145-7.87 11.145-24.4 0-32.267z"
+            ></path>
+          </svg>
         </div>
-        <div key="add" class="photo-add photo" @click="addPhoto">
+        <div
+          key="add"
+          :style="{ 'pointer-events': isDrag ? 'none' : 'initial' }"
+          class="photo-add photo"
+          @click="addPhoto"
+        >
           <div class="add-container">
             <svg
               class="add-icon"
@@ -41,6 +102,8 @@
           </div>
         </div>
       </TransitionGroup>
+      <div class="tip">* 支持拖拽批量上传</div>
+      <div v-if="isDrag" class="drag-mask"></div>
     </div>
     <div class="footer">
       <button @click="handleCancle">取消</button>
@@ -50,7 +113,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { Photo } from '@/api/types';
+  import { Photo, AlbumType } from '@/api/types';
   import useStore from '@/store/app';
   import { reactive, ref } from 'vue';
   import ImgUploader from './img-uploader.vue';
@@ -59,6 +122,11 @@
     transId: number; // 动画用唯一id
     fileUrl: string; // 上传的图片
     rotate: number; // 旋转角度
+  }
+
+  enum Direction {
+    right = 1,
+    bottom = 2,
   }
 
   const props = defineProps<{
@@ -73,21 +141,22 @@
     name: string;
     desc: string;
     photos: EditPhoto[];
-    tags: [];
+    type: AlbumType;
   }>({
     name: '',
     desc: '',
     photos: [],
-    tags: [],
+    type: AlbumType.portrait,
   });
+
+  const isDrag = ref(false);
 
   if (store.detailId) {
     // 编辑
   }
 
-  // 新增照片
-  const addPhoto = () => {
-    albumInfo.photos.push({
+  const generateNewPhoto = () => {
+    return {
       transId: +new Date(),
       id: '',
       name: '',
@@ -97,7 +166,12 @@
       height: 0,
       rotate: 0,
       thumbnail: '',
-    });
+    };
+  };
+
+  // 新增照片
+  const addPhoto = () => {
+    albumInfo.photos.push(generateNewPhoto());
   };
 
   // 移除照片
@@ -106,7 +180,9 @@
   };
 
   // 上传单张图片
-  const handleUpload = (fileUrl: string, fileName: string, photo: EditPhoto) => {
+  const handleUpload = (file: File, photo: EditPhoto) => {
+    const fileUrl = window.URL.createObjectURL(file);
+    const fileName = file.name;
     if (photo.fileUrl) {
       window.URL.revokeObjectURL(photo.fileUrl);
     }
@@ -154,6 +230,60 @@
     img.src = url;
   };
 
+  // 移入
+  const handleDragEnter = (e: DragEvent) => {
+    isDrag.value = true;
+  };
+
+  // 移出
+  const handleDragLeave = (e: DragEvent) => {
+    isDrag.value = false;
+  };
+
+  // 拖入
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    // console.log('drop', e.dataTransfer);
+    const files = e.dataTransfer?.files;
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type === 'image/png' || file.type === 'image/jpeg') {
+          const newPhoto = generateNewPhoto();
+          handleUpload(file, newPhoto);
+          albumInfo.photos.push(newPhoto);
+        }
+      }
+    }
+    isDrag.value = false;
+  };
+
+  // 判断交换图标是否显示
+  const checkExchangeVisible = (i: number, direction: Direction) => {
+    const len = albumInfo.photos.length;
+    const index = i + 1;
+    if (direction === Direction.right) {
+      if (index % 3 === 0 || index >= len) return false;
+      return true;
+    } else if (direction === Direction.bottom) {
+      if (Math.ceil(index / 3) === Math.ceil(len / 3) || index + 3 > len) return false;
+      return true;
+    }
+  };
+
+  // 交换
+  const exchangePhoto = (i: number, direction: Direction) => {
+    let nextIndex = i;
+    if (direction === Direction.right) {
+      nextIndex = i + 1;
+    } else if (direction === Direction.bottom) {
+      nextIndex = i + 3;
+    }
+    const next = albumInfo.photos[nextIndex];
+    albumInfo.photos[nextIndex] = albumInfo.photos[i];
+    albumInfo.photos[i] = next;
+  };
+
   // 提交
   const handleSubmit = () => {
     albumInfo.photos.forEach((photo) => {
@@ -176,7 +306,7 @@
     min-width: 600px;
   }
 
-  input {
+  input[type='text'] {
     display: block;
     padding: 8px 12px;
     color: #fff;
@@ -198,14 +328,31 @@
     }
   }
 
-  .name {
-    width: 50%;
-    margin-bottom: 20px;
-    font-weight: bold;
-    font-size: 24px;
+  input[type='radio'] {
+    margin-right: 4px;
+    cursor: pointer;
+  }
 
-    &::placeholder {
-      font-size: 22px;
+  .edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    .name {
+      width: 50%;
+      font-weight: bold;
+      font-size: 24px;
+
+      &::placeholder {
+        font-size: 22px;
+      }
+    }
+
+    .type-wrapper {
+      label {
+        cursor: pointer;
+      }
     }
   }
 
@@ -219,7 +366,8 @@
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    height: 40vh;
+    align-content: flex-start;
+    height: 55vh;
     margin-bottom: 24px;
     padding: 12px 0.8% 0;
     overflow: hidden auto;
@@ -232,9 +380,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      width: 31.2%;
+      width: calc(33.3% - 12px);
       height: fit-content;
-      margin: 0 1% 12px;
+      margin: 0 6px 12px;
       margin-bottom: 12px;
       padding: 12px;
       border: 1px solid #fff;
@@ -262,8 +410,38 @@
         }
       }
 
+      .exchange-icon {
+        position: absolute;
+        z-index: 2;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        transition: all 0.15s;
+        fill: #fff;
+
+        &:hover {
+          fill: #2196f3;
+        }
+      }
+
+      .right-exchange {
+        top: 50%;
+        right: -7px;
+        transform: translate(50%, -50%);
+      }
+
+      .bottom-exchange {
+        bottom: -7px;
+        left: 50%;
+        transform: translate(-50%, 50%) rotate(90deg);
+      }
+
       &:hover {
         .delete-icon {
+          opacity: 1;
+        }
+
+        .exchange-icon {
           opacity: 1;
         }
       }
@@ -297,6 +475,26 @@
           }
         }
       }
+    }
+
+    .tip {
+      position: absolute;
+      right: 4px;
+      bottom: 4px;
+      color: #999;
+      font-size: 12px;
+    }
+
+    .drag-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff4d;
+      border: 3px dashed #2196f3;
+      pointer-events: none;
     }
   }
 

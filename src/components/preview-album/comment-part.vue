@@ -285,7 +285,7 @@
           animation-fill-mode: forwards;
         }
 
-        .reply-button {
+        .button {
           animation: comment-reply-button 0.6s;
           animation-fill-mode: forwards;
         }

@@ -61,31 +61,25 @@
       </div>
     </div>
   </div>
-
-  <!-- setting -->
-  <setting-part
-    :setting="setting"
-    :img-url="props.imgUrl"
-    @scale-change="handleScaleChange"
-  ></setting-part>
 </template>
 
 <script lang="ts" setup>
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
   import useSpring from '@/hooks/useSpring';
   import errImg from '@/assets/err_img.png';
-  import SettingPart from './setting-part.vue';
 
   const props = defineProps<{
     // 图片链接
     imgUrl: string;
     // 偏移
     offset: { x: number; y: number };
+    setting: { scale: number };
   }>();
 
   // 通知图片渲染尺寸 - 宽度
   const emits = defineEmits<{
     (e: 'renderSize', width: number): void;
+    (e: 'scaleChange', scale: number): void;
   }>();
 
   const state = reactive({
@@ -105,11 +99,6 @@
     originHeight: 0,
     width: 0,
     height: 0,
-  });
-
-  // 卡片配置
-  const setting = reactive({
-    scale: 1, // 缩放
   });
 
   onMounted(() => {
@@ -321,13 +310,7 @@
 
   /** 滚轮缩放 [0.2, 3.0] */
   const handleWheel = (e: WheelEvent) => {
-    handleScaleChange(e.deltaY * -0.001);
-  };
-
-  /** 手动调整缩放 */
-  const handleScaleChange = (v: number) => {
-    const s = Math.min(Math.max(setting.scale + v, 0.2), 3);
-    setting.scale = +`${Math.round(s * 10) / 10}`.slice(0, 3);
+    emits('scaleChange', e.deltaY * -0.001);
   };
 </script>
 

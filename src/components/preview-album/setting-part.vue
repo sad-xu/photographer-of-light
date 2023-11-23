@@ -1,5 +1,6 @@
 <template>
   <div class="setting-part">
+    <!-- 缩放 -->
     <div class="setting">
       <svg
         class="icon setting-icon"
@@ -24,7 +25,7 @@
             d="M512 853.333333c-187.733333 0-341.333333-153.6-341.333333-341.333333s153.6-341.333333 341.333333-341.333333 341.333333 153.6 341.333333 341.333333-153.6 341.333333-341.333333 341.333333z m0-85.333333c140.8 0 256-115.2 256-256s-115.2-256-256-256-256 115.2-256 256 115.2 256 256 256z m-170.666667-298.666667h341.333334v85.333334H341.333333v-85.333334z"
           ></path>
         </svg>
-        <span style="min-width: 20px; text-align: center">{{ setting.scale }}</span>
+        <span class="scale-num">{{ props.setting.scale.toFixed(1) }}</span>
         <svg
           class="icon scale-icon"
           viewBox="0 0 1024 1024"
@@ -39,11 +40,56 @@
       </div>
     </div>
     <!--  -->
-    <div class="setting" v-for="i in 3" :key="i">
+    <div class="setting" v-for="i in 2" :key="i">
       <div class="radio setting-icon"></div>
       <div class="setting-content">setting</div>
     </div>
-    <!--  -->
+    <!-- 喜欢 -->
+    <div class="setting">
+      <svg
+        class="icon setting-icon"
+        viewBox="0 0 1024 1024"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M515.2 67.2c-246.4 0-448 201.6-448 448s201.6 448 448 448 448-201.6 448-448-201.6-448-448-448zM704 563.2l-150.4 153.6c-12.8 12.8-25.6 19.2-41.6 19.2s-28.8-6.4-41.6-19.2l-147.2-153.6C307.2 544 288 515.2 288 476.8c0-67.2 54.4-121.6 118.4-121.6 32 0 60.8 12.8 83.2 35.2l22.4 22.4c9.6-9.6 19.2-22.4 22.4-22.4 22.4-22.4 51.2-35.2 83.2-35.2 67.2 0 118.4 54.4 118.4 121.6 3.2 41.6-12.8 64-32 86.4z"
+          :fill="setting.like ? '#F06292' : '#fff'"
+        ></path>
+      </svg>
+      <div class="setting-content">
+        <svg
+          class="icon heart-icon"
+          :class="setting.like ? 'like-icon' : ''"
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          @click="emits('toggleLike')"
+        >
+          <path
+            d="M512 901.746939c-13.583673 0-26.122449-4.179592-37.093878-13.061225-8.881633-7.314286-225.697959-175.020408-312.424489-311.379592C133.746939 532.37551 94.040816 471.24898 94.040816 384.522449c0-144.718367 108.146939-262.269388 240.326531-262.269388 67.395918 0 131.657143 30.82449 177.632653 84.636735 45.453061-54.334694 109.191837-84.636735 177.110204-84.636735 132.702041 0 240.326531 117.55102 240.326531 262.269388 0 85.159184-37.093878 143.673469-67.395919 191.216327l-1.044898 1.567346c-86.726531 136.359184-303.542857 304.587755-312.424489 311.379592-10.44898 8.359184-22.987755 13.061224-36.571429 13.061225z"
+          ></path>
+        </svg>
+      </div>
+    </div>
+    <!-- 编辑 -->
+    <div class="setting">
+      <svg
+        class="icon setting-icon"
+        viewBox="0 0 1024 1024"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M892 855.7H132a4 4 0 0 0-4 4v64a4 4 0 0 0 4 4h760a4 4 0 0 0 4-4v-64a4 4 0 0 0-4-4z m-678-71.6L419.2 749a69.7 69.7 0 0 0 37.3-19.3l252.8-252.9a4 4 0 0 0 0-5.7L503.9 265.7a4 4 0 0 0-5.7 0L245.3 518.5a69.7 69.7 0 0 0-19.3 37.3L190.9 761a20 20 0 0 0 23.1 23.1z m547.7-365.3a3.9 3.9 0 0 0 5.6 0l91.1-91.1a68.6 68.6 0 0 0 0.3-97.1L744.4 116.3c-26.7-26.8-70.2-26.6-97.1 0.3l-91.1 91.1a3.9 3.9 0 0 0 0 5.6z"
+          fill="#fff"
+        ></path>
+      </svg>
+      <div class="setting-content">
+        <span class="edit-text" @click="emits('onEdit')">编辑</span>
+      </div>
+    </div>
+    <!-- 原图 -->
     <div class="setting">
       <svg
         class="icon setting-icon"
@@ -65,13 +111,19 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    setting: { scale: number };
+    albumId: string;
+    setting: { scale: number; like: boolean };
     // 图片链接
     imgUrl: string;
   }>();
 
   const emits = defineEmits<{
+    // 缩放
     (e: 'scaleChange', scale: number): void;
+    // 打开编辑
+    (e: 'onEdit'): void;
+    // 切换喜欢
+    (e: 'toggleLike'): void;
   }>();
 </script>
 
@@ -82,14 +134,20 @@
     right: 0;
     display: flex;
     flex-direction: column;
-    width: 90px;
+    width: 102px;
+    padding: 8px 0 8px 4px;
     font-size: 14px;
-    transform: translate(65px, -50%);
+    background: #0202022e;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    box-shadow: 0 0 15px 0 #020202;
+    transform: translate(72px, -50%);
     opacity: 0.3;
     transition: all 0.3s;
     user-select: none;
 
     &:hover {
+      padding: 12px 0 12px 12px;
       transform: translate(0, -50%);
       opacity: 1;
     }
@@ -104,11 +162,11 @@
         flex-shrink: 0;
         width: 20px;
         height: 20px;
-        cursor: pointer;
         transition: all 0.15s;
       }
 
       .scale-icon {
+        cursor: pointer;
         fill: #fff;
 
         &:hover {
@@ -133,7 +191,36 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
+        width: 65px;
+
+        .scale-num {
+          min-width: 20px;
+          font-size: 13px;
+          text-align: center;
+        }
+
+        .heart-icon {
+          cursor: pointer;
+          transition: all 0.15s;
+          fill: #eee;
+
+          &:hover {
+            transform: scale(1.2);
+          }
+        }
+
+        .like-icon {
+          fill: #e91e63;
+        }
+
+        .edit-text {
+          color: #607d8b;
+          cursor: pointer;
+
+          &:hover {
+            color: #1e88e5;
+          }
+        }
 
         .link {
           color: #607d8b;

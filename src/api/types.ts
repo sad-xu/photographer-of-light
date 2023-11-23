@@ -12,6 +12,12 @@ export interface Photo {
   isLoaded?: boolean;
 }
 
+/** 相册类型 */
+export const enum AlbumType {
+  portrait = 1, // 人像
+  still = 2, // 景物
+}
+
 /** 相册 */
 export interface Album {
   id: string;
@@ -29,8 +35,7 @@ export interface Album {
   updateTime: number;
   photos: Photo[];
   comments: Comment[];
-  /** 标签 */
-  tags: string[];
+  type: AlbumType;
   deleted?: boolean;
 }
 

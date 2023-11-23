@@ -7,18 +7,22 @@
       <span v-else>{{ comment.content }}</span>
       <span
         v-if="comment.replierId != store._id && !comment.deleted"
-        class="reply-button"
+        class="button"
         @click="() => emits('reply', comment)"
       >
         回复
       </span>
       <span
-        v-if="comment.replierId == store._id && !comment.deleted"
-        class="reply-button delete-button"
-        @click="() => emits('delete', comment)"
+        v-if="comment.replierId == store._id && !comment.deleted && !readyDelete"
+        class="button delete-button"
+        @click="deleteConfirm"
       >
         删除
       </span>
+      <span v-if="readyDelete" class="button confirm-button" @click="handleDelete(comment)">
+        确认
+      </span>
+      <span v-if="readyDelete" class="button cancel-button" @click="readyDelete = false">取消</span>
     </span>
   </div>
   <template v-for="item in comment.children ?? []" :key="item._id">
@@ -29,6 +33,7 @@
 <script lang="ts" setup>
   import { Comment } from '@/api/types';
   import useStore from '@/store/app';
+  import { ref } from 'vue';
 
   const store = useStore();
 
@@ -41,6 +46,18 @@
     (e: 'reply', comment: Comment): void;
     (e: 'delete', comment: Comment): void;
   }>();
+
+  const readyDelete = ref(false);
+
+  /** 删除二次确认 */
+  const deleteConfirm = () => {
+    readyDelete.value = true;
+  };
+
+  const handleDelete = (comment: Comment) => {
+    emits('delete', comment);
+    readyDelete.value = false;
+  };
 </script>
 
 <style lang="scss" scoped>
@@ -67,7 +84,7 @@
       color: #9e9e9e;
     }
 
-    .reply-button {
+    .button {
       display: inline-block;
       width: 0;
       height: 0;
@@ -84,8 +101,24 @@
       color: #e59a82;
     }
 
+    .confirm-button {
+      color: #999;
+
+      &:hover {
+        color: #2196f3;
+      }
+    }
+
+    .cancel-button {
+      color: #999;
+
+      &:hover {
+        color: #ccc;
+      }
+    }
+
     &:hover {
-      .reply-button {
+      .button {
         opacity: 1;
       }
     }
