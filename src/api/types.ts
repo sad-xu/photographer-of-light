@@ -14,8 +14,8 @@ export interface Photo {
 
 /** 相册类型 */
 export const enum AlbumType {
-  portrait = 1, // 人像
-  still = 2, // 景物
+  portrait = '1', // 人像
+  still = '2', // 景物
 }
 
 /** 相册 */

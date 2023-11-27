@@ -1,4 +1,4 @@
-import { Album, Comment, Photo } from '@/api/types';
+import { Album, AlbumType, Comment, Photo } from '@/api/types';
 
 export const mockPhotos: Photo[] = [
   {
@@ -153,7 +153,7 @@ export const mockAlbum: Album = {
   createTime: 1698843600,
   updateTime: 1699716600,
   photos: mockPhotos,
-  type: 1,
+  type: AlbumType.portrait,
   comments: mockCommonts,
 };
 

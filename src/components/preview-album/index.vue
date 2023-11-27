@@ -73,7 +73,7 @@
   import XLoading from '@/common/x-loading.vue';
   import SettingPart from './setting-part.vue';
   import { mockRequest } from '@/api/album';
-  import { Album, Photo, Comment } from '@/api/types';
+  import { Album, Photo, Comment, AlbumType } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
   import useStore from '@/store/app';
 
@@ -108,7 +108,7 @@
     star: 0,
     createTime: 0,
     updateTime: 0,
-    type: 1,
+    type: AlbumType.portrait,
   });
   const photoList = ref<Photo[]>([]);
   const commentList = ref<Comment[]>([]);
