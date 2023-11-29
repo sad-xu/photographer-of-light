@@ -1,6 +1,11 @@
 <template>
   <Teleport to="body">
-    <div v-if="value && !hideClose" class="ky-dialog-close-btn" @click="handleClose">
+    <div
+      v-if="value && !hideClose"
+      class="ky-dialog-close-btn"
+      :class="props.centerClose ? 'ky-dialog-close-btn-center' : ''"
+      @click="handleClose"
+    >
       <svg
         class="close-icon"
         viewBox="0 0 1024 1024"
@@ -34,6 +39,8 @@
     visible: boolean;
     // 是否隐藏右上角
     hideClose?: boolean;
+    // 关闭按钮是否居中
+    centerClose?: boolean;
     // custom style
     innerStyle?: StyleValue;
     // keep-alive
@@ -102,6 +109,12 @@
       transform: rotate(90deg);
       opacity: 0.8;
     }
+  }
+
+  .ky-dialog-close-btn-center {
+    top: auto;
+    bottom: 10%;
+    left: calc(50% - 30px);
   }
 
   .ky-dialog {

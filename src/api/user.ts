@@ -1,13 +1,13 @@
 import request from '@/utils/request';
 import { Comment } from './types';
 
+const urlAlbum = '/api/album';
 const urlUser = '/api/user';
-const urlMsg = '/api/msg';
 
 /** 获取本人信息 */
 export function fetchSelfInfo() {
   return request({
-    url: urlUser + '/self',
+    url: urlAlbum + '/self',
   });
 }
 
@@ -25,52 +25,38 @@ export function changeName(newName: string) {
 /** 获取自己的留言列表 */
 export function fetchUserMsg() {
   return request<Comment[]>({
-    url: urlMsg + '/user',
+    url: urlAlbum + '/comment',
   });
 }
 
-/** 获取自己是否有新留言 */
-export function fetchIsNewMsg() {
-  return request<boolean>({
-    url: urlUser + '/isNewMsg',
-  });
-}
-
-/** 设置自己的留言已读 */
-export function setMsgRead() {
-  return request({
-    url: urlUser + '/setMsgRead',
-  });
-}
-
-/** 点赞相册 */
+/** 收藏相册 */
 export function collectAlbum(id: string) {
   return request({
-    url: urlUser + '/album/collect',
+    url: urlAlbum + '/collect',
     method: 'post',
     data: { id },
   });
 }
 
-/** 取消点赞相册 */
+/** 取消收藏相册 */
 export function unCollectAlbum(id: string) {
   return request({
-    url: urlUser + '/album/uncollect',
+    url: urlAlbum + '/uncollect',
     method: 'post',
     data: { id },
   });
 }
 
-/** 获取用户自己的相册列表 */
-export function fetchUserCreateAlbum() {
+/** 获取指定用户已创建相册列表 */
+export function fetchUserCreateAlbum(userId: string) {
   return request({
-    url: urlUser + '/album/create',
+    url: urlAlbum + '/creation/' + userId,
   });
 }
 
-/** 获取用户点赞的相册列表 */
+/** 获取用户已收藏相册列表 */
 export function fetchUserCollectAlbum() {
   return request({
-    url: urlUser + '/album/collect',
+    url: urlAlbum + '/collection',
   });
 }
