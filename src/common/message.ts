@@ -1,25 +1,36 @@
 import { h, render } from 'vue';
 import Message from './x-message.vue';
 
-type MessageType = 'success' | 'error' | 'default';
+export type MessageType = 'success' | 'error' | 'warning';
 
-const createMessage = (message: string, type: MessageType, timeOut: number = 300) => {
+const XMessage = (msg: string, type: MessageType, timeOut: number = 1500) => {
+  const container = document.createElement('div');
   const messageVnode = h(Message, {
-    message,
+    msg,
     type,
+    onDestroy: () => {
+      render(null, container);
+    },
   });
 
-  const node = document.createElement('div');
-  document.body.appendChild(node);
-  render(messageVnode, node);
-
-  const destroy = () => {
-    document.body.removeChild(node);
-  };
+  render(messageVnode, container);
+  document.body.appendChild(container.firstElementChild!);
 
   setTimeout(() => {
-    destroy();
+    messageVnode?.component?.exposed?.close();
   }, timeOut);
 };
 
-export default createMessage;
+XMessage.success = (msg: string, timeOut?: number) => {
+  XMessage(msg, 'success', timeOut);
+};
+
+XMessage.error = (msg: string, timeOut?: number) => {
+  XMessage(msg, 'error', timeOut);
+};
+
+XMessage.warning = (msg: string, timeOut?: number) => {
+  XMessage(msg, 'warning', timeOut);
+};
+
+export default XMessage;

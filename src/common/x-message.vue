@@ -1,51 +1,75 @@
 <template>
-  <Transition name="msg-fade" mode="out-in" appear>
-    <div class="msg" :class="classObject" v-if="isVisible">
-      <span>{{ message }}</span>
+  <Transition name="msg" mode="out-in" appear @after-leave="handleAfterLeave">
+    <div class="msg" :class="classObject" v-show="isVisible">
+      <span>{{ msg }}</span>
     </div>
   </Transition>
 </template>
 
 <script lang="ts" setup>
-  import { onUnmounted, PropType, ref } from 'vue';
-  export type MessageType = 'success' | 'error' | 'default';
+  import { PropType, ref } from 'vue';
+  import { MessageType } from './message';
 
   const props = defineProps({
-    message: String,
+    msg: String,
     type: String as PropType<MessageType>,
+    onDestroy: Function,
   });
 
   const isVisible = ref(true);
   const classObject = {
-    'alert-success': props.type === 'success',
-    'alert-danger': props.type === 'error',
-    'alert-primary': props.type === 'default',
+    'msg-success': props.type === 'success',
+    'msg-error': props.type === 'error',
+    'msg-warning': props.type === 'warning',
   };
 
-  onUnmounted(() => {
-    console.log('destory');
+  const close = () => {
+    isVisible.value = false;
+  };
+
+  // 过渡结束，销毁
+  const handleAfterLeave = () => {
+    props.onDestroy!();
+  };
+
+  defineExpose({
+    close,
   });
 </script>
 
 <style lang="scss" scoped>
-  // 切换显示|编辑
-  // .msg-fade-enter-active,
-  // .msg-fade-leave-active {
-  // }
-
-  .msg-fade-enter-from,
-  .msg-fade-leave-to {
+  .msg-enter-from,
+  .msg-leave-to {
+    transform: translate(-50%, -30px) scale(0) !important;
     opacity: 0;
   }
 
   .msg {
     position: fixed;
-    top: 50px;
+    top: 36px;
     left: 50%;
     z-index: 101;
-    padding: 10px;
-    background-color: red;
-    transform: translateX(-50%);
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 10px;
+    box-shadow: 0 0 6px #575757;
+    transform: translateX(-50%) scale(1);
     transition: all 0.3s;
+  }
+
+  .msg-success {
+    color: #4caf50;
+    background-color: #c8e6c9;
+  }
+
+  .msg-warning {
+    color: #ff9800;
+    background-color: #ffe0b2;
+  }
+
+  .message-error {
+    color: #e91e63;
+    background-color: #f8bbd0;
   }
 </style>

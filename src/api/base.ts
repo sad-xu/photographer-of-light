@@ -1,26 +1,19 @@
 import { ErrSource } from './types';
-import request from '@/utils/request';
+// import request from '@/utils/request';
 
 const urlBase = '/api/base';
 
-/** 上传图片 */
-export function uploadImg() {
-  return request({
-    url: urlBase + '/uploadImg',
-  });
-}
-
 // 用户反馈
-export function uploadFeedback(content: string, name?: string) {
-  return request({
-    url: urlBase + '/feedback',
-    method: 'post',
-    data: {
-      content,
-      name,
-    },
-  });
-}
+// export function uploadFeedback(content: string, name?: string) {
+//   return request({
+//     url: urlBase + '/feedback',
+//     method: 'post',
+//     data: {
+//       content,
+//       name,
+//     },
+//   });
+// }
 
 // 异常收集 三处
 export function uploadErr(source: ErrSource, msg: string = 'unkonwn', stack: string = '') {

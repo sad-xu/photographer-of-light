@@ -47,9 +47,8 @@
       </x-dialog>
     </main>
     <footer>
-      <!-- @click="showMsg" -->
       <div class="brand">
-        <span>光之摄影师 v0.1.0-dev</span>
+        <span @click="showMsg">光之摄影师 v0.1.0-dev</span>
         <!-- 更新日志 -->
         <svg
           class="icon"
@@ -92,7 +91,7 @@
   import EditContent from './components/edit-content/index.vue';
   import HomeContent from './components/home/index.vue';
   import AboutContent, { AboutType } from './components/about.vue';
-  import createMessage from './common/message.ts';
+  import XMessage from './common/message.ts';
   import useStore from '@/store/app';
 
   const store = useStore();
@@ -123,8 +122,7 @@
   };
 
   const showMsg = () => {
-    createMessage('message', 'success', 3000);
-    store.setDetailId(store.detailId ? '' : '123');
+    XMessage.success('message', 3000);
   };
 </script>
 

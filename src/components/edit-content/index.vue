@@ -1,7 +1,13 @@
 <template>
   <div class="edit-dialog">
     <div class="edit-header">
-      <input class="name" v-model="albumInfo.name" type="text" placeholder="相册名..." />
+      <input
+        class="name"
+        v-model="albumInfo.name"
+        type="text"
+        placeholder="相册名..."
+        maxlength="50"
+      />
       <div class="type-wrapper">
         类型：
         <input v-model="albumInfo.type" type="radio" id="portrait" :value="AlbumType.portrait" />
@@ -16,7 +22,13 @@
         <label for="still">景物</label>
       </div>
     </div>
-    <input class="desc" v-model="albumInfo.desc" type="text" placeholder="相册简介..." />
+    <input
+      class="desc"
+      v-model="albumInfo.desc"
+      type="text"
+      placeholder="相册简介..."
+      maxlength="100"
+    />
     <div class="scroll-wrapper">
       <div
         class="photo-wrapper"
@@ -109,7 +121,7 @@
     </div>
     <div class="footer">
       <button @click="handleCancle">取消</button>
-      <button @click="handleSubmit">确认</button>
+      <button @click="handleSubmit">{{ isEdit ? '保存' : '新建' }}</button>
     </div>
   </div>
 </template>
@@ -119,6 +131,7 @@
   import useStore from '@/store/app';
   import { reactive, ref } from 'vue';
   import ImgUploader from './img-uploader.vue';
+  import XMessage from '@/common/message.ts';
 
   interface EditPhoto extends Photo {
     transId: number; // 动画用唯一id
@@ -131,29 +144,25 @@
     bottom = 2,
   }
 
-  const props = defineProps<{
-    albumId?: string;
-  }>();
-
   const store = useStore();
 
-  const isEdit = ref(!!store.detailId);
+  const isEdit = ref(!!store.editId);
   const loading = ref(false);
   const albumInfo = reactive<{
     name: string;
     desc: string;
-    photos: EditPhoto[];
     type: AlbumType;
+    photos: EditPhoto[];
   }>({
     name: '',
     desc: '',
-    photos: [],
     type: AlbumType.portrait,
+    photos: [],
   });
 
   const isDrag = ref(false);
 
-  if (store.detailId) {
+  if (store.editId) {
     // 编辑
   }
 
@@ -287,7 +296,10 @@
 
   // 提交
   const handleSubmit = () => {
-    albumInfo.photos.forEach((photo) => {
+    const { name, desc, type, photos } = albumInfo;
+    if (!name.length) return XMessage.warning('请输入相册名~');
+    if (!desc.length) return XMessage.warning('请输入相册简介~');
+    photos.forEach((photo) => {
       if (photo.fileUrl) {
         initImgThumbnailData(photo.fileUrl, photo);
       }
