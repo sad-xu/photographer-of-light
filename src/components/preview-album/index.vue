@@ -40,11 +40,12 @@
         <!-- setting -->
         <setting-part
           :albumId="albumInfo.id ?? ''"
+          :is-like="isLike"
           :setting="setting"
           :img-url="photoList[currentIndex]?.url || ''"
-          @scale-change="handleScaleChange"
           @on-edit="handleOpenEdit"
           @toggle-like="handleToggleLike"
+          @setting-change="handleSettingChange"
         ></setting-part>
         <!-- footer -->
         <div
@@ -76,6 +77,13 @@
   import { Album, Photo, Comment, AlbumType } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
   import useStore from '@/store/app';
+  import { CARD_SETTING_KEY } from '@/utils';
+
+  export interface CardSetting {
+    scale: number;
+    shine: string;
+    glare: string;
+  }
 
   const store = useStore();
   const props = defineProps<{
@@ -119,10 +127,25 @@
   const bgUrl = ref('');
 
   // 卡片配置
-  const setting = reactive({
+  let defaultSetting: CardSetting = {
     scale: 1, // 缩放
-    like: false, // 是否喜欢
-  });
+    shine: 's-1', // 炫光
+    glare: 'g-1', // 光晕
+  };
+  try {
+    const localSetting = window.localStorage.getItem(CARD_SETTING_KEY);
+    if (localSetting) {
+      defaultSetting = {
+        ...defaultSetting,
+        ...JSON.parse(localSetting),
+      };
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  const setting = reactive<CardSetting>(defaultSetting);
+  // 是否喜欢
+  const isLike = ref(false);
 
   onMounted(() => {
     window.addEventListener('mousemove', handleParallax);
@@ -139,7 +162,7 @@
     (id) => {
       if (id) {
         // 初始化是否喜欢
-        setting.like = store.collection.some((v) => v == id);
+        isLike.value = store.collection.some((v) => v == id);
         // 获取相册信息+评论
         mockRequest(mockAlbum).then((res: any) => {
           albumInfo.id = res.id;
@@ -212,13 +235,25 @@
 
   /** 切换喜欢 */
   const handleToggleLike = () => {
-    const flag = setting.like;
+    const flag = isLike.value;
     if (flag) {
       store.removeCollection(props.albumId);
     } else {
       store.addCollection(props.albumId);
     }
-    setting.like = !flag;
+    isLike.value = !flag;
+  };
+
+  /** 更新setting */
+  const handleSettingChange = (settingName: string, val: number | string) => {
+    if (settingName === 'scale') {
+      handleScaleChange(val as number);
+    } else if (settingName === 'shine') {
+      setting.shine = val as string;
+    } else if (settingName === 'glare') {
+      setting.glare = val as string;
+    }
+    window.localStorage.setItem(CARD_SETTING_KEY, JSON.stringify(setting));
   };
 </script>
 

@@ -40,13 +40,7 @@
           @mouseout="handleInteractEnd"
           @wheel.prevent="handleWheel"
         >
-          <!-- <img class="card__back" src="" alt="背面" loading="lazy" /> -->
           <div class="card__front">
-            <!-- <img
-            src="https://s.cn.bing.net/th?id=OHR.RomeView_ZH-CN5882212305_1920x1080.webp&qlt=50"
-            loading="lazy"
-            @load="handleLoadImg"
-          /> -->
             <div
               ref="cardInnerEl"
               class="card-inner"
@@ -54,8 +48,8 @@
                 filter: imgInfo.isLoading ? 'blur(20px)' : 'none',
               }"
             ></div>
-            <div class="card__shine"></div>
-            <div class="card__glare"></div>
+            <div class="card__shine" :class="props.setting.shine"></div>
+            <div class="card__glare" :class="props.setting.glare"></div>
           </div>
         </div>
       </div>
@@ -67,13 +61,14 @@
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
   import useSpring from '@/hooks/useSpring';
   import errImg from '@/assets/err_img.png';
+  import { CardSetting } from './index.vue';
 
   const props = defineProps<{
     // 图片链接
     imgUrl: string;
     // 偏移
     offset: { x: number; y: number };
-    setting: { scale: number };
+    setting: CardSetting;
   }>();
 
   // 通知图片渲染尺寸 - 宽度
@@ -327,70 +322,70 @@
     transition: width 0.3s, height 0.3s;
     user-select: none;
 
-    .card__shine {
-      --shift: 1px;
-      --imgsize: cover;
+    // .card__shine {
+    //   --shift: 1px;
+    //   --imgsize: cover;
 
-      background-image: var(--glitter), var(--glitter),
-        conic-gradient(
-          var(--sunpillar-clr-4),
-          var(--sunpillar-clr-5),
-          var(--sunpillar-clr-6),
-          var(--sunpillar-clr-1),
-          var(--sunpillar-clr-4)
-        ),
-        radial-gradient(
-          farthest-corner circle at var(--pointer-x) var(--pointer-y),
-          hsl(150deg 0% 0% / 98%) 10%,
-          hsl(0deg 0% 95% / 15%) 90%
-        );
-      background-position: 45% 45%, 55% 55%, center center, center center;
-      background-size: var(--glittersize) var(--glittersize), var(--glittersize) var(--glittersize),
-        cover, cover;
-      background-blend-mode: soft-light, hard-light, overlay;
-      filter: brightness(calc(0.4 + (var(--pointer-from-center) * 0.2))) contrast(1) saturate(2.7);
-      mix-blend-mode: color-dodge;
+    //   background-image: var(--glitter), var(--glitter),
+    //     conic-gradient(
+    //       var(--sunpillar-clr-4),
+    //       var(--sunpillar-clr-5),
+    //       var(--sunpillar-clr-6),
+    //       var(--sunpillar-clr-1),
+    //       var(--sunpillar-clr-4)
+    //     ),
+    //     radial-gradient(
+    //       farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    //       hsl(150deg 0% 0% / 98%) 10%,
+    //       hsl(0deg 0% 95% / 15%) 90%
+    //     );
+    //   background-position: 45% 45%, 55% 55%, center center, center center;
+    //   background-size: var(--glittersize) var(--glittersize), var(--glittersize) var(--glittersize),
+    //     cover, cover;
+    //   background-blend-mode: soft-light, hard-light, overlay;
+    //   filter: brightness(calc(0.4 + (var(--pointer-from-center) * 0.2))) contrast(1) saturate(2.7);
+    //   mix-blend-mode: color-dodge;
 
-      &::before {
-        background-image: var(--foil),
-          linear-gradient(45deg, hsl(46deg 95% 50%), hsl(52deg 100% 69%)),
-          radial-gradient(
-            farthest-corner circle at var(--pointer-x) var(--pointer-y),
-            hsl(10deg 20% 90% / 95%) 10%,
-            hsl(0deg 0% 0%) 70%
-          );
-        background-position: center center, center center, center center;
-        background-size: var(--imgsize), cover, cover;
-        background-blend-mode: hard-light, multiply;
-        opacity: 0.8;
-        filter: brightness(1.25) contrast(1.25) saturate(0.35);
-        mix-blend-mode: lighten;
-        content: '';
-        mask-image: none !important;
-      }
+    //   &::before {
+    //     background-image: var(--foil),
+    //       linear-gradient(45deg, hsl(46deg 95% 50%), hsl(52deg 100% 69%)),
+    //       radial-gradient(
+    //         farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    //         hsl(10deg 20% 90% / 95%) 10%,
+    //         hsl(0deg 0% 0%) 70%
+    //       );
+    //     background-position: center center, center center, center center;
+    //     background-size: var(--imgsize), cover, cover;
+    //     background-blend-mode: hard-light, multiply;
+    //     opacity: 0.8;
+    //     filter: brightness(1.25) contrast(1.25) saturate(0.35);
+    //     mix-blend-mode: lighten;
+    //     content: '';
+    //     mask-image: none !important;
+    //   }
 
-      &::after {
-        background-image: var(--glitter);
-        background-position: calc(
-            50% - ((var(--shift) * 2) * var(--pointer-from-left)) + var(--shift)
-          )
-          calc(50% - ((var(--shift) * 2) * var(--pointer-from-top)) + var(--shift));
-        background-size: var(--glittersize) var(--glittersize);
-        filter: brightness(calc((var(--pointer-from-center) * 0.6) + 0.6)) contrast(1.5);
-        mix-blend-mode: overlay;
-        content: '';
-        mask-image: none !important;
-      }
-    }
+    //   &::after {
+    //     background-image: var(--glitter);
+    //     background-position: calc(
+    //         50% - ((var(--shift) * 2) * var(--pointer-from-left)) + var(--shift)
+    //       )
+    //       calc(50% - ((var(--shift) * 2) * var(--pointer-from-top)) + var(--shift));
+    //     background-size: var(--glittersize) var(--glittersize);
+    //     filter: brightness(calc((var(--pointer-from-center) * 0.6) + 0.6)) contrast(1.5);
+    //     mix-blend-mode: overlay;
+    //     content: '';
+    //     mask-image: none !important;
+    //   }
+    // }
 
-    .card__glare {
-      background-image: radial-gradient(
-        farthest-corner circle at var(--pointer-x) var(--pointer-y),
-        hsl(45deg 8% 80% / 30%) 0%,
-        hsl(22deg 15% 12%) 180%
-      );
-      filter: brightness(1.3) contrast(1.5);
-      mix-blend-mode: hard-light;
-    }
+    // .card__glare {
+    //   background-image: radial-gradient(
+    //     farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    //     hsl(45deg 8% 80% / 30%) 0%,
+    //     hsl(22deg 15% 12%) 180%
+    //   );
+    //   filter: brightness(1.3) contrast(1.5);
+    //   mix-blend-mode: hard-light;
+    // }
   }
 </style>

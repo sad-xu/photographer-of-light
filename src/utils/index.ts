@@ -3,6 +3,8 @@ export const TOKEN_KEY = 'ff-token';
 export const NAME_KEY = 'ff-name';
 export const AVATAR_KEY = 'ff-avatar';
 
+export const CARD_SETTING_KEY = 'ff-card-setting';
+
 /** 背景动画 */
 export const BG_VIDEO_LIST = [
   {
