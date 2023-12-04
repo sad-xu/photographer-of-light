@@ -38,7 +38,7 @@
     </div>
     <!-- shine -->
     <div class="setting">
-      <div class="setting-icon" data-name="炫光"></div>
+      <div class="setting-icon shine-icon" data-name="炫光"></div>
       <div class="setting-content">
         <div class="dot-wrapper">
           <div
@@ -310,8 +310,12 @@
     }
   }
 
+  .shine-icon {
+    background: url('@/assets/shine-icon.png') center / cover no-repeat;
+  }
+
   .glare-icon {
-    background: url('@/assets/glare-icon-2.png') center / cover no-repeat;
+    background: url('@/assets/glare-icon.png') center / cover no-repeat;
   }
 
   .dot-wrapper {
@@ -330,7 +334,7 @@
     }
 
     .selected-dot {
-      background-color: #f00;
+      background-color: #f44336;
     }
   }
 </style>

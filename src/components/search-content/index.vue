@@ -2,7 +2,7 @@
   <div class="search-content">
     <div>
       <div class="search">
-        <input class="search-input" v-model="kw" maxlength="10" placeholder="请输入关键词..." />
+        <input id="search-input" v-model="kw" maxlength="10" placeholder="请输入关键词..." />
         <button class="search-button" @click="handleSearch">搜索</button>
       </div>
       <div class="filter">
@@ -227,7 +227,7 @@
     .search {
       display: flex;
 
-      .search-input {
+      #search-input {
         width: 250px;
         padding: 8px 12px;
         color: #fff;

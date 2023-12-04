@@ -1,6 +1,6 @@
 #card {
-  .card__shine.s-0 {
-  }
+  // .card__shine.s-0 {
+  // }
 
   // secret-rare
   .card__shine.s-1 {
@@ -782,13 +782,11 @@
 
   // v-max
   .card__shine.s-13 {
-    --foil: url('@/assets/vmaxbg.jpg');
     --space: 6%;
     --angle: 133deg;
     --imgsize: cover;
 
-    background-image: var(--foil),
-      repeating-linear-gradient(
+    background-image: repeating-linear-gradient(
         -33deg,
         hsl(2deg 70% 47%) calc(var(--space) * 1),
         hsl(228deg 60% 64%) calc(var(--space) * 2),

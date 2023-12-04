@@ -25,7 +25,12 @@
         </svg>
         <p>{{ replied?.replierName }} {{ replied?.content }}</p>
       </div>
-      <input class="send-input" v-model.trim="inputVal" @keyup.enter="handleSend" />
+      <input
+        id="comment-input"
+        class="send-input"
+        v-model.trim="inputVal"
+        @keyup.enter="handleSend"
+      />
       <button
         class="send-button"
         :class="{
