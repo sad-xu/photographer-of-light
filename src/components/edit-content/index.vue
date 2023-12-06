@@ -550,4 +550,20 @@
   .list-leave-active {
     position: absolute !important;
   }
+
+  @include media-breakpoint-down(md) {
+    .edit-dialog {
+      width: 95vw;
+      min-width: auto;
+      max-width: 600px;
+    }
+
+    .photo-wrapper .photo {
+      padding: 4px;
+
+      .photo-name {
+        font-size: 14px;
+      }
+    }
+  }
 </style>

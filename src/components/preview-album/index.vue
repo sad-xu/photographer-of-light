@@ -31,10 +31,13 @@
         </div>
         <!-- 照片展示区 -->
         <custom-card
-          :img-url="photoList[currentIndex]?.url || ''"
+          ref="customCardRef"
+          :img-url="photoList[currentIndex]?.url ?? ''"
+          :img-width="photoList[currentIndex]?.width ?? 0"
+          :img-height="photoList[currentIndex]?.height ?? 0"
           :offset="offset"
           :setting="setting"
-          @render-size="setAlbumBg"
+          @loaded="setAlbumBg"
           @scale-change="handleScaleChange"
         ></custom-card>
         <!-- setting -->
@@ -46,7 +49,22 @@
           @on-edit="handleOpenEdit"
           @toggle-like="handleToggleLike"
           @setting-change="handleSettingChange"
-        ></setting-part>
+        >
+          <svg
+            class="rotate-icon"
+            @click="handleRotate"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M288 352v192h128v64h-128v64h192v-320h-192z m128 128h-64v-64h64v64zM544 352v320h192v-320h-192z m128 256h-64v-192h64v192zM957.44 531.84h1.344v-1.92l-1.344 1.92z"
+            ></path>
+            <path
+              d="M994.56 474.88l-35.84 55.04-1.28 1.92-35.84 55.04-60.16-119.04 32 1.92C872.32 277.76 709.76 128 512 128 300.16 128 128 300.16 128 512s172.16 384 384 384c140.16 0 263.04-75.52 329.6-188.16h1.856l0.704 0.704 53.056 31.296A446.4 446.4 0 0 1 512 960c-247.68 0-448-200.32-448-448s200.32-448 448-448c234.88 0 426.88 179.84 446.08 408.96l36.48 1.92z"
+            ></path>
+          </svg>
+        </setting-part>
         <!-- footer -->
         <div
           class="ablum-footer"
@@ -77,7 +95,7 @@
   import { Album, Photo, Comment, AlbumType } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
   import useStore from '@/store/app';
-  import { CARD_SETTING_KEY } from '@/utils';
+  import { CARD_SETTING_KEY, isTouchDevice } from '@/utils';
 
   export interface CardSetting {
     scale: number;
@@ -94,7 +112,8 @@
     (e: 'back'): void;
   }>();
 
-  const timeId = ref(0);
+  const customCardRef = ref();
+
   // 窗口尺寸
   const windowSize = reactive({
     width: window.innerWidth,
@@ -147,14 +166,24 @@
   // 是否喜欢
   const isLike = ref(false);
 
+  let timeId = 0;
+
   onMounted(() => {
-    window.addEventListener('mousemove', handleParallax);
-    window.addEventListener('resize', handleResize);
+    if (isTouchDevice) {
+      window.addEventListener('deviceorientation', handleOrientation);
+    } else {
+      window.addEventListener('mousemove', handleMousemove);
+      window.addEventListener('resize', handleResize);
+    }
   });
 
   onBeforeUnmount(() => {
-    window.removeEventListener('mousemove', handleParallax);
-    window.removeEventListener('resize', handleResize);
+    if (isTouchDevice) {
+      window.removeEventListener('deviceorientation', handleOrientation);
+    } else {
+      window.removeEventListener('mousemove', handleMousemove);
+      window.removeEventListener('resize', handleResize);
+    }
   });
 
   watch(
@@ -176,9 +205,6 @@
           albumInfo.type = res.type;
           photoList.value = res.photos;
           commentList.value = res.comments;
-          // if (res.photos.length) {
-          //   bgUrl.value = res.photos[0].url;
-          // }
         });
       }
     },
@@ -192,12 +218,23 @@
   };
 
   /** 根据鼠标位置计算位移 */
-  const handleParallax = (e: MouseEvent) => {
-    if (timeId.value != 0) return;
-    timeId.value = window.requestAnimationFrame(() => {
+  const handleMousemove = (e: MouseEvent) => {
+    if (timeId != 0) return;
+    timeId = window.requestAnimationFrame(() => {
       offset.x = ((e.clientX - windowSize.width / 2) / (windowSize.width / 2)) * 20;
       offset.y = ((e.clientY - windowSize.height / 2) / (windowSize.height / 2)) * 5;
-      timeId.value = 0;
+      timeId = 0;
+    });
+  };
+
+  /** 陀螺仪 */
+  const handleOrientation = (e: DeviceOrientationEvent) => {
+    // 左右旋转 gamma [-90,90) 前后旋转 beta [-180,180)
+    if (timeId != 0) return;
+    timeId = window.requestAnimationFrame(() => {
+      offset.x = ((e.gamma ?? 0) / 90) * 40;
+      offset.y = (((e.beta ?? 90) - 90) / 180) * 20;
+      timeId = 0;
     });
   };
 
@@ -254,6 +291,11 @@
       setting.glare = val as string;
     }
     window.localStorage.setItem(CARD_SETTING_KEY, JSON.stringify(setting));
+  };
+
+  /** 旋转 */
+  const handleRotate = () => {
+    customCardRef.value.rotateCard();
   };
 </script>
 
@@ -331,10 +373,23 @@
         padding-bottom: 8px;
         font-family: cursive;
         text-align: center;
+        transition: transform 0.1s;
 
         .photo-title {
           font-weight: bold;
           font-size: 24px;
+        }
+      }
+
+      .rotate-icon {
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+        transition: all 0.3s;
+        fill: rgb(255 255 255 / 50%);
+
+        &:hover {
+          fill: #fff;
         }
       }
 

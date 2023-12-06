@@ -1,8 +1,10 @@
 <template>
-  <div class="card-wrapper">
+  <div
+    class="card-wrapper"
+    :style="{ transform: `translate(-50%, -50%) rotate(${imgInfo.rotate}deg)` }"
+  >
     <div
       id="card"
-      class="interactive"
       :class="{
         active: state.active,
         interacting: state.interacting,
@@ -36,8 +38,10 @@
       <div class="card__translater">
         <div
           class="card__rotator"
-          @pointermove="handleInteract"
-          @mouseout="handleInteractEnd"
+          @touchmove="handleTouchMove"
+          @touchend="() => resetCard()"
+          @mousemove="handleMouseMove"
+          @mouseout="() => resetCard()"
           @wheel.prevent="handleWheel"
         >
           <div class="card__front">
@@ -62,10 +66,14 @@
   import useSpring from '@/hooks/useSpring';
   import errImg from '@/assets/err_img.png';
   import { CardSetting } from './index.vue';
+  import { isTouchDevice } from '@/utils';
 
   const props = defineProps<{
     // 图片链接
     imgUrl: string;
+    // 图片尺寸
+    imgWidth: number;
+    imgHeight: number;
     // 偏移
     offset: { x: number; y: number };
     setting: CardSetting;
@@ -73,7 +81,7 @@
 
   // 通知图片渲染尺寸 - 宽度
   const emits = defineEmits<{
-    (e: 'renderSize', width: number): void;
+    (e: 'loaded'): void;
     (e: 'scaleChange', scale: number): void;
   }>();
 
@@ -84,7 +92,6 @@
   });
 
   const cardInnerEl = ref();
-  const resizeTimeId = ref(0);
   const imgInfo = reactive({
     // 是否加载中
     isLoading: true,
@@ -94,7 +101,13 @@
     originHeight: 0,
     width: 0,
     height: 0,
+    rotate: 0,
   });
+
+  // 卡片rect 缓存
+  let rect: DOMRect | null;
+  // 尺寸变化标记
+  let resizeTimeId = 0;
 
   onMounted(() => {
     loadImg({
@@ -103,10 +116,16 @@
       cb: () => {},
     });
     window.addEventListener('resize', resizeCard);
+    if (isTouchDevice) {
+      window.addEventListener('devicemotion', handleDeviceMotion);
+    }
   });
 
   onBeforeUnmount(() => {
     window.removeEventListener('resize', resizeCard);
+    if (isTouchDevice) {
+      window.removeEventListener('devicemotion', handleDeviceMotion);
+    }
   });
 
   watch(
@@ -115,7 +134,23 @@
       if (!url) return;
       imgInfo.isLoading = true;
       imgInfo.isFailed = false;
+      const r = (imgInfo.rotate / 90) % 4;
+      if (r === 1) {
+        imgInfo.rotate -= 90;
+      } else if (r === 2) {
+        imgInfo.rotate -= 180;
+      } else if (r === 3) {
+        imgInfo.rotate += 90;
+      }
       loadImg({ imgUrl: url });
+    }
+  );
+
+  watch(
+    () => props.setting.scale,
+    () => {
+      console.log('scale');
+      rect = null;
     }
   );
 
@@ -130,29 +165,30 @@
     cb?: () => void;
   }) => {
     if (!imgUrl) return;
-    const t1 = +new Date();
+    // const t1 = +new Date();
     const imgEl = new Image();
     imgEl.src = imgUrl;
     imgEl.draggable = false;
-    imgInfo.originWidth = 300;
-    imgInfo.originHeight = 300;
+    imgInfo.originWidth = props.imgWidth;
+    imgInfo.originHeight = props.imgHeight;
     imgEl.onload = () => {
       // 至少延时300ms
-      const dt = immediate ? 0 : 300 - (+new Date() - t1);
-      setTimeout(
-        () => {
-          if (imgUrl == props.imgUrl) {
-            imgInfo.originWidth = imgEl.width;
-            imgInfo.originHeight = imgEl.height;
-            imgInfo.isLoading = false;
-            resizeCard();
-            cardInnerEl.value.innerHTML = '';
-            cardInnerEl.value.appendChild(imgEl);
-            cb ? cb() : null;
-          }
-        },
-        dt < 0 ? 0 : dt
-      );
+      // const dt = immediate ? 0 : 300 - (+new Date() - t1);
+      // setTimeout(
+      //   () => {
+      if (imgUrl == props.imgUrl) {
+        imgInfo.originWidth = imgEl.width;
+        imgInfo.originHeight = imgEl.height;
+        imgInfo.isLoading = false;
+        resizeCard();
+        emits('loaded');
+        cardInnerEl.value.innerHTML = '';
+        cardInnerEl.value.appendChild(imgEl);
+        cb ? cb() : null;
+      }
+      // },
+      // dt < 0 ? 0 : dt
+      // );
     };
     imgEl.onerror = () => {
       if (imgUrl == props.imgUrl) {
@@ -165,21 +201,21 @@
 
   /** 尺寸变化 */
   const resizeCard = () => {
-    if (resizeTimeId.value != 0) return;
-    resizeTimeId.value = window.requestAnimationFrame(() => {
+    if (resizeTimeId != 0) return;
+    rect = null;
+    resizeTimeId = window.requestAnimationFrame(() => {
       // 根据原始尺寸和屏幕尺寸，计算等比缩放后的尺寸
       const maxWidth = window.innerWidth * 0.7;
       const maxHeight = window.innerHeight - 200;
 
-      const wRatio = maxWidth / imgInfo.originWidth;
-      const hRatio = maxHeight / imgInfo.originHeight;
+      const isRotate = (imgInfo.rotate / 90) % 2;
+      const wRatio = maxWidth / (isRotate ? imgInfo.originHeight : imgInfo.originWidth);
+      const hRatio = maxHeight / (isRotate ? imgInfo.originWidth : imgInfo.originHeight);
 
       const scale = Math.min(wRatio, hRatio);
       imgInfo.width = imgInfo.originWidth * scale;
-
       imgInfo.height = imgInfo.originHeight * scale;
-      emits('renderSize', imgInfo.width);
-      resizeTimeId.value = 0;
+      resizeTimeId = 0;
     });
   };
 
@@ -226,22 +262,28 @@
     return toMin + ((toMax - toMin) * (val - fromMin)) / (fromMax - fromMin);
   };
 
-  /** 鼠标在卡上移动 */
-  const handleInteract = (e: PointerEvent) => {
+  /** 鼠标在卡上移动 触发点在卡片上的位置百分比 随旋转角度变化 */
+  const handleInteract = (_x: number, _y: number) => {
+    let cx = _x - 50;
+    let cy = _y - 50;
+    let x = cx;
+    let y = cy;
+    const r = (imgInfo.rotate / 90) % 4;
+    // 转轴公式
+    if (r === 1) {
+      x = cy;
+      y = -cx;
+    } else if (r === 2) {
+      x = -cx;
+      y = -cy;
+    } else if (r === 3) {
+      x = -cy;
+      y = cx;
+    }
+    x += 50;
+    y += 50;
     state.interacting = true;
-    const el = e.target as HTMLElement;
-    // TODO: 缓存尺寸数据
-    const rect = el.getBoundingClientRect();
-    // 触发点在卡片内的位置百分比
-    const percent = {
-      x: clamp(((e.clientX - rect.left) * 100) / rect.width),
-      y: clamp(((e.clientY - rect.top) * 100) / rect.height),
-    };
-    const center = {
-      x: percent.x - 50,
-      y: percent.y - 50,
-    };
-
+    const center = { x: x - 50, y: y - 50 };
     spRotate.stiffness = springInteractSettings.stiffness;
     spRotate.damping = springInteractSettings.damping;
     spRotate.set({
@@ -251,20 +293,64 @@
     spGlare.stiffness = springInteractSettings.stiffness;
     spGlare.damping = springInteractSettings.damping;
     spGlare.set({
-      x: percent.x,
-      y: percent.y,
+      x: x,
+      y: y,
       o: 1,
     });
     spBackground.stiffness = springInteractSettings.stiffness;
     spBackground.damping = springInteractSettings.damping;
     spBackground.set({
-      x: adjust(percent.x, 0, 100, 37, 63),
-      y: adjust(percent.y, 0, 100, 33, 67),
+      x: adjust(x, 0, 100, 37, 63),
+      y: adjust(y, 0, 100, 33, 67),
     });
   };
 
-  /** 移出卡片 */
-  const handleInteractEnd = (e: any, delay = 500) => {
+  /** touch move */
+  const handleTouchMove = (e: TouchEvent) => {
+    const el = e.target as HTMLElement;
+    if (!rect) {
+      rect = el.getBoundingClientRect();
+    }
+    const touch = e.touches[0];
+    if (touch) {
+      handleInteract(
+        clamp(((touch.clientX - rect.left) * 100) / rect.width),
+        clamp(((touch.clientY - rect.top) * 100) / rect.height)
+      );
+    }
+  };
+
+  /** mouse move */
+  const handleMouseMove = (e: MouseEvent) => {
+    const el = e.target as HTMLElement;
+    if (!rect) {
+      rect = el.getBoundingClientRect();
+    }
+    handleInteract(
+      clamp(((e.clientX - rect.left) * 100) / rect.width),
+      clamp(((e.clientY - rect.top) * 100) / rect.height)
+    );
+  };
+
+  let timeId = 0;
+
+  /** 陀螺仪 速度 TODO:真机测试 */
+  const handleDeviceMotion = (e: DeviceMotionEvent) => {
+    const now = +new Date();
+    timeId = now;
+    const rotationRate = e.rotationRate;
+    console.log('rotationRate', rotationRate);
+    if (rotationRate?.beta === null) return;
+    handleInteract(clamp(rotationRate?.gamma || 50), clamp(rotationRate?.beta || 50));
+    setTimeout(() => {
+      if (timeId === now) {
+        resetCard(0);
+      }
+    }, 500);
+  };
+
+  /** 移出 卡片复位 */
+  const resetCard = (delay = 500) => {
     window.setTimeout(() => {
       const snapStiff = 0.01;
       const snapDamp = 0.06;
@@ -272,34 +358,15 @@
 
       spRotate.stiffness = snapStiff;
       spRotate.damping = snapDamp;
-      spRotate.set(
-        {
-          x: 0,
-          y: 0,
-        },
-        { soft: 1 }
-      );
+      spRotate.set({ x: 0, y: 0 }, { soft: 1 });
 
       spGlare.stiffness = snapStiff;
       spGlare.damping = snapDamp;
-      spGlare.set(
-        {
-          x: 50,
-          y: 50,
-          o: 0,
-        },
-        { soft: 1 }
-      );
+      spGlare.set({ x: 50, y: 50, o: 0 }, { soft: 1 });
 
       spBackground.stiffness = snapStiff;
       spBackground.damping = snapDamp;
-      spBackground.set(
-        {
-          x: 50,
-          y: 50,
-        },
-        { soft: 1 }
-      );
+      spBackground.set({ x: 50, y: 50 }, { soft: 1 });
     }, delay);
   };
 
@@ -307,6 +374,16 @@
   const handleWheel = (e: WheelEvent) => {
     emits('scaleChange', e.deltaY * -0.001);
   };
+
+  /** 旋转90° + 调整尺寸 - 外部调用 */
+  const rotateCard = () => {
+    imgInfo.rotate = imgInfo.rotate + 90;
+    resizeCard();
+  };
+
+  defineExpose({
+    rotateCard,
+  });
 </script>
 
 <style lang="scss" scoped>
@@ -314,78 +391,6 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  #card {
-    z-index: 19;
-    transition: width 0.3s, height 0.3s;
-    user-select: none;
-
-    // .card__shine {
-    //   --shift: 1px;
-    //   --imgsize: cover;
-
-    //   background-image: var(--glitter), var(--glitter),
-    //     conic-gradient(
-    //       var(--sunpillar-clr-4),
-    //       var(--sunpillar-clr-5),
-    //       var(--sunpillar-clr-6),
-    //       var(--sunpillar-clr-1),
-    //       var(--sunpillar-clr-4)
-    //     ),
-    //     radial-gradient(
-    //       farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    //       hsl(150deg 0% 0% / 98%) 10%,
-    //       hsl(0deg 0% 95% / 15%) 90%
-    //     );
-    //   background-position: 45% 45%, 55% 55%, center center, center center;
-    //   background-size: var(--glittersize) var(--glittersize), var(--glittersize) var(--glittersize),
-    //     cover, cover;
-    //   background-blend-mode: soft-light, hard-light, overlay;
-    //   filter: brightness(calc(0.4 + (var(--pointer-from-center) * 0.2))) contrast(1) saturate(2.7);
-    //   mix-blend-mode: color-dodge;
-
-    //   &::before {
-    //     background-image: var(--foil),
-    //       linear-gradient(45deg, hsl(46deg 95% 50%), hsl(52deg 100% 69%)),
-    //       radial-gradient(
-    //         farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    //         hsl(10deg 20% 90% / 95%) 10%,
-    //         hsl(0deg 0% 0%) 70%
-    //       );
-    //     background-position: center center, center center, center center;
-    //     background-size: var(--imgsize), cover, cover;
-    //     background-blend-mode: hard-light, multiply;
-    //     opacity: 0.8;
-    //     filter: brightness(1.25) contrast(1.25) saturate(0.35);
-    //     mix-blend-mode: lighten;
-    //     content: '';
-    //     mask-image: none !important;
-    //   }
-
-    //   &::after {
-    //     background-image: var(--glitter);
-    //     background-position: calc(
-    //         50% - ((var(--shift) * 2) * var(--pointer-from-left)) + var(--shift)
-    //       )
-    //       calc(50% - ((var(--shift) * 2) * var(--pointer-from-top)) + var(--shift));
-    //     background-size: var(--glittersize) var(--glittersize);
-    //     filter: brightness(calc((var(--pointer-from-center) * 0.6) + 0.6)) contrast(1.5);
-    //     mix-blend-mode: overlay;
-    //     content: '';
-    //     mask-image: none !important;
-    //   }
-    // }
-
-    // .card__glare {
-    //   background-image: radial-gradient(
-    //     farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    //     hsl(45deg 8% 80% / 30%) 0%,
-    //     hsl(22deg 15% 12%) 180%
-    //   );
-    //   filter: brightness(1.3) contrast(1.5);
-    //   mix-blend-mode: hard-light;
-    // }
+    transition: transform 0.3s;
   }
 </style>

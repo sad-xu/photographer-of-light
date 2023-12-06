@@ -254,7 +254,7 @@
         padding: 8px 16px;
         color: #eee;
         font-size: 18px;
-        background-color: #494949;
+        background-color: #485e69;
         border: 1px solid #666;
         border-radius: 8px;
         border-top-left-radius: 0;
@@ -400,6 +400,13 @@
 
     .album-wrapper-loading {
       filter: blur(3px);
+    }
+  }
+
+  @include media-breakpoint-down(md) {
+    .search-content .content-show {
+      width: 100vw;
+      height: 70vh;
     }
   }
 </style>

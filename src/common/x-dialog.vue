@@ -3,7 +3,7 @@
     <div
       v-if="value && !hideClose"
       class="ky-dialog-close-btn"
-      :class="props.centerClose ? 'ky-dialog-close-btn-center' : ''"
+      :class="props.centerClose ? 'btn-center' : ''"
       @click="handleClose"
     >
       <svg
@@ -100,6 +100,12 @@
     cursor: pointer;
     transition: opacity 0.3s, transform 0.3s;
 
+    &.btn-center {
+      top: auto;
+      bottom: 10%;
+      left: calc(50% - 30px);
+    }
+
     .close-icon {
       width: 32px;
       height: 32px;
@@ -111,12 +117,6 @@
     }
   }
 
-  .ky-dialog-close-btn-center {
-    top: auto;
-    bottom: 10%;
-    left: calc(50% - 30px);
-  }
-
   .ky-dialog {
     position: fixed;
     top: 0;
@@ -126,7 +126,7 @@
     justify-content: center;
     width: 100vw;
     height: 100vh;
-    padding-top: 30vh;
+    padding-top: 20vh;
     overflow: auto;
     color: #fff;
     background-color: rgb(0 0 0 / 60%);
@@ -151,6 +151,23 @@
       &:hover {
         background-color: rgb(144 147 153 / 50%);
       }
+    }
+  }
+
+  @include media-breakpoint-down(md) {
+    .ky-dialog-close-btn {
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  @include media-breakpoint-down(sm) {
+    .ky-dialog-close-btn {
+      top: 0;
+      right: 0;
+      border-top-right-radius: 0;
     }
   }
 </style>

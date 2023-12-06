@@ -7,7 +7,7 @@ $grid-breakpoints: (
   md: 768px,
   lg: 992px,
   xl: 1200px,
-  xxl: 1400px
+  xxl: 1400px,
 );
 
 // Maximum breakpoint width.
@@ -15,16 +15,16 @@ $grid-breakpoints: (
   /* stylelint-disable-next-line scss/no-global-function-names */
   $max: map-get($breakpoints, $name);
 
-  @return if($max and $max > 0, $max - .02, null);
+  @return if($max and $max > 0, $max - 0.02, null);
 }
 
 // Minimum breakpoint width. Null for the smallest (first) breakpoint.
-@function breakpoint-min($name, $breakpoints: $grid-breakpoints) {
-  /* stylelint-disable-next-line scss/no-global-function-names */
-  $min: map-get($breakpoints, $name);
+// @function breakpoint-min($name, $breakpoints: $grid-breakpoints) {
+//   /* stylelint-disable-next-line scss/no-global-function-names */
+//   $min: map-get($breakpoints, $name);
 
-  @return if($min != 0, $min, null);
-}
+//   @return if($min != 0, $min, null);
+// }
 
 // Media of at most the maximum breakpoint width. No query for the largest breakpoint.
 // Makes the @content apply to the given breakpoint and narrower.
@@ -42,14 +42,14 @@ $grid-breakpoints: (
 
 // Media of at least the minimum breakpoint width. No query for the smallest breakpoint.
 // Makes the @content apply to the given breakpoint and wider.
-@mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
-  $min: breakpoint-min($name, $breakpoints);
+// @mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
+//   $min: breakpoint-min($name, $breakpoints);
 
-  @if $min {
-    @media (min-width: $min) {
-      @content;
-    }
-  } @else {
-    @content;
-  }
-}
+//   @if $min {
+//     @media (min-width: $min) {
+//       @content;
+//     }
+//   } @else {
+//     @content;
+//   }
+// }

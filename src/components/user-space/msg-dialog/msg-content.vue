@@ -139,4 +139,10 @@
       }
     }
   }
+
+  @include media-breakpoint-down(md) {
+    .msg-content {
+      min-width: 80vw;
+    }
+  }
 </style>

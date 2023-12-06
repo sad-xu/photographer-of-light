@@ -104,4 +104,10 @@
       margin-right: 4px;
     }
   }
+
+  @include media-breakpoint-down(md) {
+    .album {
+      width: 100%;
+    }
+  }
 </style>

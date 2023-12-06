@@ -7,7 +7,8 @@
       <h1 class="title" :class="{ 'title-show': board.show }">光之摄影师</h1>
     </Transition>
     <Transition name="fade">
-      <div v-show="board.show" class="home-content">
+      <m-board v-if="breakpointDown('md')" v-show="board.show"></m-board>
+      <div v-else v-show="board.show" class="home-content">
         <div class="board">
           <board-list
             name="最新变动"
@@ -63,9 +64,12 @@
   import { BG_VIDEO_LIST } from '@/utils';
   import { mockRequest } from '@/api/album';
   import BoardList from './board-list.vue';
+  import MBoard from './m-board.vue';
   import useStore from '@/store/app';
+  import useWidth from '@/hooks/useWidth';
 
   const store = useStore();
+  const { breakpointDown } = useWidth();
   const bgUrl = ref(BG_VIDEO_LIST[Math.floor(Math.random() * BG_VIDEO_LIST.length)].url);
   const board = reactive<any>({
     show: false,
@@ -77,7 +81,7 @@
   const refreshLoading = ref(false);
 
   const generateRandomAlbums = () =>
-    Array.from({ length: 15 }).map((_, i) => ({
+    Array.from({ length: 10 }).map((_, i) => ({
       id: `id${Math.random()}`,
       name: `mock album${Math.round(Math.random() * 100)}`,
       userId: 'userid',
@@ -211,5 +215,8 @@
     100% {
       transform: scale(1.15) rotate(360deg);
     }
+  }
+
+  .m-home-content {
   }
 </style>

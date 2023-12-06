@@ -1,7 +1,7 @@
 <template>
   <div v-if="props.type === 'about'" class="about-content">
     <h1>光之摄影师</h1>
-    <p class="desc">-- 专为 FF14 打造的照片分享网站</p>
+    <p class="desc">专为 FF14 打造的照片分享网站</p>
     <div class="contributor-wrapper">
       <div class="contributor">
         <span>作者:</span>
@@ -39,6 +39,10 @@
       margin-top: 12px;
       font-size: 18px;
       transform: translateX(50%);
+
+      &::before {
+        content: '-- ';
+      }
     }
 
     .contributor-wrapper {
@@ -63,6 +67,16 @@
   .update-content {
     h2 {
       margin-bottom: 24px;
+    }
+  }
+
+  @include media-breakpoint-down(md) {
+    .about-content .desc {
+      transform: none;
+
+      &::before {
+        content: '';
+      }
     }
   }
 </style>
