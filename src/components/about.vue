@@ -18,10 +18,14 @@
     <h2>更新日志</h2>
     <p class="line">开发中...</p>
   </div>
+  <div v-else-if="props.type === 'guide'" class="guide-content">
+    <h2>使用说明</h2>
+    <p class="line">TODO...</p>
+  </div>
 </template>
 
 <script lang="ts" setup>
-  export type AboutType = 'about' | 'update';
+  export type AboutType = 'about' | 'update' | 'guide';
 
   const props = defineProps<{
     type: AboutType;
@@ -29,6 +33,10 @@
 </script>
 
 <style lang="scss" scoped>
+  h2 {
+    margin-bottom: 24px;
+  }
+
   .about-content {
     display: flex;
     flex-direction: column;
@@ -65,9 +73,9 @@
   }
 
   .update-content {
-    h2 {
-      margin-bottom: 24px;
-    }
+  }
+
+  .guide-content {
   }
 
   @include media-breakpoint-down(md) {

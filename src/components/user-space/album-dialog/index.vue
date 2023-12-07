@@ -5,9 +5,7 @@
       <div
         v-for="(album, i) in albumList"
         :key="album.id"
-        :style="{
-          'transition-delay': `${i * 0.1}s`,
-        }"
+        :style="{ 'transition-delay': `${i * 0.1}s` }"
       >
         <album-item :type="props.type" :album="album"></album-item>
       </div>

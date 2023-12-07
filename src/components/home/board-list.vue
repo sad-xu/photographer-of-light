@@ -10,9 +10,7 @@
           v-for="(album, i) in props.albumList"
           :key="album.id"
           class="album"
-          :style="{
-            'transition-delay': `${i * 0.05}s`,
-          }"
+          :style="{ 'transition-delay': `${i * 0.05}s` }"
         >
           <div class="album-header">
             <span class="name" @click="emits('select', album.id)">{{ album.name }}</span>
@@ -51,6 +49,13 @@
           <div class="desc" @click="emits('select', album.id)">
             {{ album.desc }}
           </div>
+          <div class="album-footer">
+            <span>{{ album.userName }}</span>
+            <thumbnails-group
+              :photoNum="album.photoNum"
+              :thumbnails="album.thumbnails"
+            ></thumbnails-group>
+          </div>
         </div>
       </div>
     </Transition>
@@ -58,12 +63,12 @@
 </template>
 
 <script lang="ts" setup>
-  import { Album } from '@/api/types';
   import { formatDate } from '@/utils';
+  import ThumbnailsGroup from './thumbnails-group.vue';
 
   const props = defineProps<{
     name: string;
-    albumList: Album[];
+    albumList: any[];
     type: string;
   }>();
 
@@ -110,23 +115,14 @@
       .album {
         position: relative;
         padding: 8px 4px 8px 0;
-
-        &::after {
-          position: absolute;
-          right: 0;
-          bottom: 0;
-          width: 90%;
-          height: 1px;
-          background: linear-gradient(90deg, #fff, transparent);
-          content: '';
-        }
+        border-bottom: 1px solid rgb(153 153 153 / 80%);
 
         .album-header {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: space-between;
           margin-bottom: 4px;
-          padding-right: 8px;
+          padding-right: 4px;
           line-height: 24px;
 
           .name {
@@ -144,12 +140,14 @@
             display: flex;
             flex-shrink: 0;
             align-items: center;
+            justify-content: flex-end;
             min-width: 46px;
             margin-left: 12px;
+            font-size: 14px;
 
             .icon {
-              width: 20px;
-              height: 20px;
+              width: 16px;
+              height: 16px;
               margin-right: 4px;
             }
           }
@@ -160,25 +158,31 @@
         }
 
         .desc {
+          display: -webkit-box;
           overflow: hidden;
           color: #ddd;
           font-size: 14px;
-          white-space: nowrap;
-          text-indent: 2em;
           text-overflow: ellipsis;
           word-break: break-all;
           cursor: pointer;
           transition: color 0.15s;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+
+          // white-space: nowrap;
 
           &:hover {
             color: #03a9f4;
           }
+        }
 
-          // display: -webkit-box;
-          // overflow: hidden;
-          // word-break: break-all;
-          // -webkit-line-clamp: 2;
-          // -webkit-box-orient: vertical;
+        .album-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 22px;
+          margin-top: 4px;
+          font-size: 13px;
         }
       }
     }

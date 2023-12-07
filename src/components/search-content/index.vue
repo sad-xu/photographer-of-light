@@ -55,7 +55,7 @@
           <div class="album-header">
             <div class="header-left" @click="selectAlbum(item)">{{ item.name }}</div>
             <div class="header-right">
-              <div class="icon-wrapper">
+              <!-- <div class="icon-wrapper">
                 <svg
                   class="icon"
                   viewBox="0 0 1024 1024"
@@ -82,7 +82,7 @@
                   ></path>
                 </svg>
                 {{ item.photoNum }}
-              </div>
+              </div> -->
               <div class="icon-wrapper">
                 <svg
                   class="icon"
@@ -114,6 +114,13 @@
             </div>
           </div>
           <div class="desc">{{ item.desc }}</div>
+          <div class="album-footer">
+            <span>{{ item.userName }}</span>
+            <thumbnails-group
+              :photo-num="item.photoNum"
+              :thumbnails="item.thumbnails"
+            ></thumbnails-group>
+          </div>
         </div>
       </div>
       <search-pagination
@@ -133,6 +140,8 @@
   import { reactive, ref } from 'vue';
   import XLoading from '@/common/x-loading.vue';
   import SearchPagination from './search-pagination.vue';
+  import ThumbnailsGroup from '../home/thumbnails-group.vue';
+  import { mockPhotos } from '@/utils/mock';
 
   const emits = defineEmits<{
     (e: 'close', id: string): void;
@@ -186,6 +195,10 @@
           createTime: 1698843600,
           updateTime: 1699716600,
           type: 1,
+          thumbnails: [
+            ...mockPhotos.map((v) => v.thumbnail),
+            ...mockPhotos.map((v) => v.thumbnail),
+          ],
         })),
       },
       2000
@@ -395,6 +408,15 @@
           margin-top: 4px;
           color: #bbb;
         }
+
+        .album-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 22px;
+          margin-top: 4px;
+          font-size: 13px;
+        }
       }
     }
 
@@ -407,6 +429,10 @@
     .search-content .content-show {
       width: 100vw;
       height: 70vh;
+    }
+
+    .search-content .album-wrapper .album {
+      margin: 0 4px;
     }
   }
 </style>

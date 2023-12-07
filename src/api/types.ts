@@ -37,6 +37,8 @@ export interface Album {
   comments: Comment[];
   type: AlbumType;
   deleted?: boolean;
+  /** 列表缩略图列表 */
+  thumbnails: string[];
 }
 
 /** 留言 */

@@ -164,7 +164,7 @@
   }
 
   @include media-breakpoint-down(sm) {
-    .ky-dialog-close-btn {
+    .ky-dialog-close-btn:not(.btn-center) {
       top: 0;
       right: 0;
       border-top-right-radius: 0;
