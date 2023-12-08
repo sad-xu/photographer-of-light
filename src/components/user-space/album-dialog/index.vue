@@ -20,6 +20,7 @@
   import XLoading from '@/common/x-loading.vue';
   import { Album } from '@/api/types';
   import { mockRequest } from '@/api/album';
+  import { mockPhotos } from '@/utils/mock';
 
   let num = 0;
 
@@ -37,7 +38,7 @@
         name: '相册-' + i,
         userId: i + '',
         userName: 'name' + i,
-        desc: '全家福全家福全家福全家福全家福全家福',
+        desc: '全家福全家福全家福全家福全家福全家福全家福全家福全家福全家福全家福全家福',
         star: 12,
         photoNum: 15,
         commentNum: 21,
@@ -46,6 +47,7 @@
         photos: [],
         comments: [],
         type: 1,
+        thumbnails: [...mockPhotos.map((v) => v.thumbnail), ...mockPhotos.map((v) => v.thumbnail)],
       }))
     )
       .then((res) => {

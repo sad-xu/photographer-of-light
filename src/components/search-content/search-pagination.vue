@@ -104,7 +104,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 12px;
+    margin-top: 24px;
     line-height: 30px;
     user-select: none;
 
