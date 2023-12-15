@@ -2,6 +2,12 @@
 @import './card-shine';
 @import './card-glare';
 
+// 字体
+@font-face {
+  font-family: EORZEA;
+  src: url('../assets/EORZEA.ttf');
+}
+
 // 全局样式
 * {
   margin: 0;

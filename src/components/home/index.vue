@@ -6,6 +6,7 @@
     <Transition name="fade" appear>
       <div class="title-wrapper" :class="{ 'title-wrapper-show': board.show }">
         <h1 class="title">光之摄影师</h1>
+        <h3 class="sub-title">Photagrapher Of Light</h3>
       </div>
     </Transition>
     <Transition name="fade">
@@ -15,7 +16,6 @@
         :board="board"
         :refreshLoading="refreshLoading"
         @refresh-random="refreshRandomList"
-        @select="jumpToDetail"
       >
       </m-board>
       <pc-board
@@ -24,7 +24,6 @@
         :board="board"
         :refreshLoading="refreshLoading"
         @refresh-random="refreshRandomList"
-        @select="jumpToDetail"
       >
       </pc-board>
     </Transition>
@@ -37,11 +36,9 @@
   import { mockRequest } from '@/api/album';
   import MBoard from './m-board.vue';
   import PcBoard from './pc-board.vue';
-  import useStore from '@/store/app';
   import useWidth from '@/hooks/useWidth';
   import { mockPhotos } from '@/utils/mock';
 
-  const store = useStore();
   const { breakpointDown } = useWidth();
   const bgUrl = ref(BG_VIDEO_LIST[Math.floor(Math.random() * BG_VIDEO_LIST.length)].url);
   const board = reactive<any>({
@@ -92,11 +89,6 @@
         refreshLoading.value = false;
       });
   };
-
-  /** 打开详情 */
-  const jumpToDetail = (id: string) => {
-    store.setDetailId(id);
-  };
 </script>
 
 <style lang="scss" scoped>
@@ -125,6 +117,8 @@
     left: 0;
     z-index: 2;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     width: 100%;
     transform: translateY(-50%);
@@ -138,14 +132,28 @@
       transform: scale(1.5);
       transition: all 0.7s;
     }
+
+    .sub-title {
+      margin-top: 15px;
+      color: #fff;
+      font-size: 18px;
+      font-family: EORZEA, sans-serif;
+      transform: scale(1.5);
+      transition: all 0.7s;
+    }
   }
 
   .title-wrapper-show {
     top: 10vh;
     transform: translateY(0);
 
-    .title {
+    .title,
+    .sub-title {
       transform: scale(1);
+    }
+
+    .sub-title {
+      margin-top: 0;
     }
   }
 </style>

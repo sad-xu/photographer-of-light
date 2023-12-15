@@ -1,5 +1,6 @@
 <template>
   <div class="album-dialog">
+    <div class="title">{{ store.targetUserName }}的相册</div>
     <x-loading v-if="loading"></x-loading>
     <TransitionGroup name="album">
       <div
@@ -7,7 +8,7 @@
         :key="album.id"
         :style="{ 'transition-delay': `${i * 0.1}s` }"
       >
-        <album-item :type="props.type" :album="album" @select="handleSelect"></album-item>
+        <album-item :album="album" @select="handleSelectAlbum"></album-item>
       </div>
     </TransitionGroup>
     <div style="height: 10vh"></div>
@@ -16,21 +17,19 @@
 
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import AlbumItem from './album-item.vue';
+  import AlbumItem from './user-space/album-dialog/album-item.vue';
   import XLoading from '@/common/x-loading.vue';
   import { Album } from '@/api/types';
   import { mockRequest } from '@/api/album';
   import { mockPhotos } from '@/utils/mock';
+  import useStore from '@/store/app';
 
-  const props = defineProps<{ type: string }>();
-  const emits = defineEmits<{
-    (e: 'select', id: string): void;
-  }>();
-
+  const store = useStore();
   const loading = ref(false);
   const albumList = ref<Album[]>([]);
 
   const initAlbum = () => {
+    console.log(store.targetUserId, store.targetUserName);
     loading.value = true;
     mockRequest(
       Array.from({ length: 20 }).map((_, i) => ({
@@ -60,16 +59,13 @@
 
   initAlbum();
 
-  const handleSelect = (id: string) => {
-    emits('select', id);
+  const handleSelectAlbum = (albumId: string) => {
+    store.closeTargetUser();
+    store.setDetailId(albumId);
   };
 </script>
 
 <style lang="scss" scoped>
-  .album-dialog {
-    padding-bottom: 30vh;
-  }
-
   .album-enter-active,
   .album-leave-active {
     transition: all 0.8s ease;
@@ -79,5 +75,19 @@
   .album-leave-to {
     transform: translateY(80px);
     opacity: 0;
+  }
+
+  .album-dialog {
+    padding-bottom: 30vh;
+  }
+
+  .title {
+    position: absolute;
+    top: 10vh;
+    left: 50%;
+    color: #cde9ff;
+    font-weight: bold;
+    font-size: 32px;
+    transform: translateX(-50%);
   }
 </style>

@@ -9,7 +9,8 @@
         :class="{ 'selected-tab': i === currentTabIndex }"
         @click="handleSelectTag(i)"
       >
-        {{ tab.label }}
+        <span>{{ tab.label }}</span>
+        <span class="sub-title">{{ tab.subLabel }}</span>
       </div>
     </div>
     <Transition name="board" mode="out-in">
@@ -23,7 +24,7 @@
           :key="album.id"
           class="album"
           :style="{ 'transition-delay': `${i * 0.05}s` }"
-          @click="emits('select', album.id)"
+          @click="jumpToDetail(album.id)"
         >
           <div class="album-header">
             <span class="name">{{ album.name }}</span>
@@ -97,6 +98,7 @@
   import { computed, ref } from 'vue';
   import { formatDate } from '@/utils';
   import ThumbnailsGroup from './thumbnails-group.vue';
+  import useStore from '@/store/app';
 
   const props = defineProps<{
     board: any;
@@ -105,15 +107,16 @@
 
   const emits = defineEmits<{
     (e: 'refresh-random'): void;
-    (e: 'select', id: string): void;
   }>();
+
+  const store = useStore();
 
   const currentTabIndex = ref(0);
   const tabBar = ref([
-    { label: '最新变动', value: 'latest' },
-    { label: '最多喜欢', value: 'likest' },
-    { label: '最多评论', value: 'commentest' },
-    { label: '随便看看', value: 'random' },
+    { label: '最新变动', subLabel: 'Latest', value: 'latest' },
+    { label: '最多喜欢', subLabel: 'Likest', value: 'likest' },
+    { label: '最多评论', subLabel: 'Commentest', value: 'commentest' },
+    { label: '随便看看', subLabel: 'Random', value: 'random' },
   ]);
   const boardBodyRef = ref();
 
@@ -125,6 +128,11 @@
   const handleSelectTag = (i: number) => {
     currentTabIndex.value = i;
     boardBodyRef.value.scrollTop = 0;
+  };
+
+  /** 打开详情 */
+  const jumpToDetail = (id: string) => {
+    store.setDetailId(id);
   };
 </script>
 
@@ -146,7 +154,8 @@
 
   .m-board {
     position: absolute;
-    top: calc(14vh + 50px);
+    top: calc(15vh + 50px);
+    z-index: 3;
     display: flex;
     flex-direction: column;
     width: 80vw;
@@ -154,13 +163,13 @@
     height: 70vh;
     background-color: #1e1e1e66;
     border-radius: 8px;
-    box-shadow: 0 6px 6px rgb(0 0 0 / 40%);
+    box-shadow: 0 0 6px rgb(0 0 0 / 40%);
     backdrop-filter: blur(2px);
 
     .tabbar {
       position: relative;
       display: flex;
-      height: 40px;
+      height: 48px;
       overflow: hidden;
       font-size: 15px;
       border-bottom: 1px solid rgb(158 158 158 / 50%);
@@ -180,15 +189,27 @@
         z-index: 1;
         display: flex;
         flex: 1;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         color: #eee;
         transition: all 0.3s;
+
+        .sub-title {
+          margin-top: 2px;
+          color: #bbb;
+          font-size: 12px;
+          font-family: EORZEA, sans-serif;
+        }
       }
 
       .selected-tab {
         color: #353434;
         font-weight: bold;
+
+        .sub-title {
+          color: #444;
+        }
       }
     }
 

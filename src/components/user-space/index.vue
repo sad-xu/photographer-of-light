@@ -40,10 +40,14 @@
     </div>
     <!-- 相册列表 -->
     <x-dialog v-model:visible="albumVisible">
-      <album-dialog :type="albumType"></album-dialog>
+      <album-dialog :type="albumType" @select="handleSelectAlbum"></album-dialog>
     </x-dialog>
     <!-- 我的消息 -->
-    <msg-dialog :visible="msgVisible" @back-click="msgVisible = false" @select="handleSelectAlbum">
+    <msg-dialog
+      :visible="msgVisible"
+      @back-click="msgVisible = false"
+      @select="handleSelectAlbumFromMsg"
+    >
     </msg-dialog>
   </div>
 </template>
@@ -66,10 +70,15 @@
     albumVisible.value = true;
   };
 
+  const handleSelectAlbum = (albumId: string) => {
+    albumVisible.value = false;
+    store.setDetailId(albumId);
+  };
+
   // 我的消息
   const msgVisible = ref(false);
 
-  const handleSelectAlbum = (albumId: string) => {
+  const handleSelectAlbumFromMsg = (albumId: string) => {
     msgVisible.value = false;
     store.setDetailId(albumId);
   };

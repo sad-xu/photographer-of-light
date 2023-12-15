@@ -13,7 +13,13 @@ export interface EditConfig {
   editId: string;
 }
 
-export interface AppState extends UserInfo, EditConfig {
+export interface TargetUserConfig {
+  targetUserVisible: boolean;
+  targetUserId: string;
+  targetUserName: string;
+}
+
+export interface AppState extends UserInfo, EditConfig, TargetUserConfig {
   detailId: string;
   collection: string[];
   creation: string[];
@@ -40,6 +46,10 @@ export const useStore = defineStore('app', {
     // 编辑状态
     editVisible: false,
     editId: '',
+    // 指定用户已创建相册列表
+    targetUserVisible: false,
+    targetUserId: '',
+    targetUserName: '',
     // 当前详情id
     detailId: defaultDetailId,
     // 已收藏列表
@@ -78,6 +88,16 @@ export const useStore = defineStore('app', {
     // 关闭编辑
     closeEdit() {
       this.editVisible = false;
+    },
+    // 打开指定用户
+    openTargetUser(userId: string, userName: string) {
+      this.targetUserId = userId;
+      this.targetUserVisible = true;
+      this.targetUserName = userName;
+    },
+    // 关闭指定用户
+    closeTargetUser() {
+      this.targetUserVisible = false;
     },
     // 设置详情id
     setDetailId(id: string) {

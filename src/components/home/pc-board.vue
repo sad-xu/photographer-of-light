@@ -3,34 +3,29 @@
     <div class="board">
       <board-list
         name="最新变动"
+        sub-name="Latest"
         type="latest"
         :albumList="props.board.latest"
-        @select="jumpToDetail"
       ></board-list>
     </div>
     <div class="board">
       <board-list
         name="最多喜欢"
+        sub-name="Likest"
         type="likest"
         :albumList="props.board.likest"
-        @select="jumpToDetail"
       ></board-list>
     </div>
     <div class="board">
       <board-list
         name="最多评论"
+        sub-name="Commentest"
         type="commentest"
         :albumList="props.board.commentest"
-        @select="jumpToDetail"
       ></board-list>
     </div>
     <div class="board">
-      <board-list
-        name="随便看看"
-        type="random"
-        :albumList="props.board.random"
-        @select="jumpToDetail"
-      >
+      <board-list name="随便看看" sub-name="Random" type="random" :albumList="props.board.random">
         <svg
           class="refresh-icon"
           :class="{ 'refresh-loading': props.refreshLoading }"
@@ -58,12 +53,7 @@
 
   const emits = defineEmits<{
     (e: 'refresh-random'): void;
-    (e: 'select', id: string): void;
   }>();
-
-  const jumpToDetail = (id: string) => {
-    emits('select', id);
-  };
 </script>
 
 <style lang="scss" scoped>
@@ -72,7 +62,7 @@
     top: calc(15vh + 50px);
     display: flex;
     height: 68vh;
-    padding: 24px 0 12px 24px;
+    padding: 16px 0 12px 24px;
     background-color: #1e1e1e66;
     border-radius: 8px;
     backdrop-filter: blur(2px);

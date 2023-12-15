@@ -1,5 +1,5 @@
 <template>
-  <div class="album">
+  <div class="album" @click="emits('select', album.id)">
     <div class="header">
       <span class="name">
         {{ album.name }}
@@ -51,8 +51,12 @@
   import ThumbnailsGroup from '@/components/home/thumbnails-group.vue';
 
   const props = defineProps<{
-    type: string;
+    type?: string;
     album: Album;
+  }>();
+
+  const emits = defineEmits<{
+    (e: 'select', id: string): void;
   }>();
 </script>
 

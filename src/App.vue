@@ -43,6 +43,10 @@
       >
         <edit-content></edit-content>
       </x-dialog>
+      <!-- 指定用户的已创建相册列表 -->
+      <x-dialog v-model:visible="store.targetUserVisible">
+        <target-user-content></target-user-content>
+      </x-dialog>
       <!-- 更新日志|关于 -->
       <x-dialog v-model:visible="aboutVisible" center-close>
         <about-content :type="aboutType"></about-content>
@@ -104,6 +108,7 @@
   import SearchContent from './components/search-content/index.vue';
   import EditContent from './components/edit-content/index.vue';
   import HomeContent from './components/home/index.vue';
+  import TargetUserContent from './components/target-user-content.vue';
   import AboutContent, { AboutType } from './components/about.vue';
   import XMessage from './common/message.ts';
   import useStore from '@/store/app';

@@ -1,6 +1,9 @@
 <template>
   <div class="header">
-    <h3>{{ props.name }}</h3>
+    <div class="title-wrapper">
+      <h3>{{ props.name }}</h3>
+      <span class="sub-title">{{ props.subName }}</span>
+    </div>
     <slot></slot>
   </div>
   <div class="board-list">
@@ -13,7 +16,7 @@
           :style="{ 'transition-delay': `${i * 0.05}s` }"
         >
           <div class="album-header">
-            <span class="name" @click="emits('select', album.id)">{{ album.name }}</span>
+            <span class="name" @click="jumpToDetail(album.id)">{{ album.name }}</span>
             <div class="icon-wrapper" v-if="props.type === 'likest'">
               <svg
                 class="icon"
@@ -46,11 +49,13 @@
               {{ formatDate(album.updateTime) }}
             </div>
           </div>
-          <div class="desc" @click="emits('select', album.id)">
+          <div class="desc" @click="jumpToDetail(album.id)">
             {{ album.desc }}
           </div>
           <div class="album-footer">
-            <span>{{ album.userName }}</span>
+            <span class="user-name" @click="openTargetUser(album.userId, album.userName)">
+              {{ album.userName }}
+            </span>
             <thumbnails-group
               :photoNum="album.photoNum"
               :thumbnails="album.thumbnails"
@@ -65,16 +70,26 @@
 <script lang="ts" setup>
   import { formatDate } from '@/utils';
   import ThumbnailsGroup from './thumbnails-group.vue';
+  import useStore from '@/store/app';
 
   const props = defineProps<{
     name: string;
+    subName: string;
     albumList: any[];
     type: string;
   }>();
 
-  const emits = defineEmits<{
-    (e: 'select', id: string): void;
-  }>();
+  const store = useStore();
+
+  /** 打开详情 */
+  const jumpToDetail = (id: string) => {
+    store.setDetailId(id);
+  };
+
+  /** 打开指定用户相册列表 */
+  const openTargetUser = (userId: string, userName: string) => {
+    store.openTargetUser(userId, userName);
+  };
 </script>
 
 <style lang="scss" scoped>
@@ -95,11 +110,22 @@
 
   .header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    margin-bottom: 14px;
 
-    h3 {
-      flex-shrink: 0;
-      height: 32px;
+    .title-wrapper {
+      display: flex;
+      align-items: flex-end;
+
+      h3 {
+        flex-shrink: 0;
+        margin-right: 12px;
+      }
+
+      .sub-title {
+        font-family: EORZEA, sans-serif;
+      }
     }
   }
 
@@ -183,6 +209,14 @@
           height: 22px;
           margin-top: 4px;
           font-size: 13px;
+
+          .user-name {
+            cursor: pointer;
+
+            &:hover {
+              color: #03a9f4;
+            }
+          }
         }
       }
     }

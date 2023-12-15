@@ -69,8 +69,8 @@ export function formatDate(t: number) {
     const h = d.getHours();
     const m = d.getMinutes();
     return `${now.getFullYear() === year ? '' : year + '年'}${d.getMonth() + 1}月${d.getDate()}日 ${
-      h > 9 ? '0' + h : h
-    }:${m > 9 ? '0' + m : m}`;
+      h > 9 ? h : '0' + h
+    }:${m > 9 ? m : '0' + m}`;
   }
 }
 
