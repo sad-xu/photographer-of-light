@@ -46,6 +46,11 @@ svg {
 input,
 button {
   outline: none;
+  appearance: none;
+}
+
+input[type='radio'] {
+  appearance: auto;
 }
 
 ::selection {

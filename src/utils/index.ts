@@ -78,6 +78,7 @@ export function formatDate(t: number) {
 export const isTouchDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
   window.navigator.userAgent
 );
+
 // return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 export default null;

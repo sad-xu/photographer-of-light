@@ -7,6 +7,7 @@
         type="text"
         placeholder="相册名..."
         maxlength="50"
+        @keyup.enter="(e: any) => e.target.blur()"
       />
       <div class="type-wrapper">
         类型：
@@ -28,6 +29,7 @@
       type="text"
       placeholder="相册简介..."
       maxlength="100"
+      @keyup.enter="(e: any) => e.target.blur()"
     />
     <div class="scroll-wrapper">
       <div
@@ -363,7 +365,11 @@
     }
 
     .type-wrapper {
+      display: flex;
+      align-items: center;
+
       label {
+        text-align: center;
         cursor: pointer;
       }
     }

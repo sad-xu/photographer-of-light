@@ -33,7 +33,7 @@
         :innerStyle="{ paddingTop: 0, alignItems: 'center' }"
         keepAlive
       >
-        <search-content @close="closeSearchDialog"></search-content>
+        <search-content ref="searchContentRef" @close="closeSearchDialog"></search-content>
       </x-dialog>
       <!-- 新建|编辑 -->
       <x-dialog
@@ -115,12 +115,14 @@
 
   const store = useStore();
   const searchVisible = ref(false);
+  const searchContentRef = ref();
   const aboutVisible = ref(false);
   const aboutType = ref<AboutType>('about');
 
   /** 打开搜索 */
   const openSearchDialog = () => {
     searchVisible.value = true;
+    searchContentRef.value.focus();
   };
 
   /** 选中相册+关闭搜索 */

@@ -27,8 +27,11 @@
       </div>
       <input
         id="comment-input"
+        ref="commentInputRef"
         class="send-input"
         v-model.trim="inputVal"
+        type="text"
+        enterkeyhint="send"
         @keyup.enter="handleSend"
       />
       <button
@@ -67,6 +70,7 @@
   }>();
 
   const contentRef = ref();
+  const commentInputRef = ref();
   const clonedCommentList = ref<Comment[]>([]);
   const inputVal = ref('');
   const loading = ref(false);
@@ -127,6 +131,7 @@
 
   // 发送评论
   const handleSend = () => {
+    commentInputRef.value.blur();
     const str = inputVal.value;
     if (!str.length) return;
     loading.value = true;
@@ -233,6 +238,7 @@
         width: 100%;
         padding: 0 4px;
         border: 1px solid transparent;
+        border-radius: 0;
         transition: all 0.15s;
 
         &:focus {

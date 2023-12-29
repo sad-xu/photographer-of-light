@@ -204,6 +204,7 @@
 
   .guide-content {
     height: fit-content;
+    padding: 0 12px 0 32px;
     padding-bottom: 120px;
 
     a {

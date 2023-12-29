@@ -2,7 +2,16 @@
   <div class="search-content">
     <div>
       <div class="search">
-        <input id="search-input" v-model="kw" maxlength="10" placeholder="请输入关键词..." />
+        <input
+          id="search-input"
+          ref="searchInputRef"
+          v-model="kw"
+          maxlength="10"
+          type="search"
+          enterkeyhint="search"
+          placeholder="请输入关键词..."
+          @keyup.enter="handleSearch"
+        />
         <button class="search-button" @click="handleSearch">搜索</button>
       </div>
       <div class="filter">
@@ -109,7 +118,7 @@
 <script lang="ts" setup>
   import { mockRequest } from '@/api/album';
   import { Album, AlbumType } from '@/api/types';
-  import { reactive, ref } from 'vue';
+  import { onMounted, reactive, ref } from 'vue';
   import XLoading from '@/common/x-loading.vue';
   import SearchPagination from './search-pagination.vue';
   import ThumbnailsGroup from '../home/thumbnails-group.vue';
@@ -125,6 +134,7 @@
     { label: '景物', value: AlbumType.still },
   ];
 
+  const searchInputRef = ref();
   const showContent = ref(false);
   const filterConfig = reactive({
     order: 'time', // time like
@@ -147,6 +157,7 @@
   };
 
   const handleSearch = () => {
+    searchInputRef.value.blur();
     showContent.value = true;
     if (loading.value) return;
     loading.value = true;
@@ -198,6 +209,16 @@
   const selectAlbum = (album: Album) => {
     emits('close', album.id);
   };
+
+  // 输入框聚焦
+  const focus = () => {
+    console.log('mounted', searchInputRef.value);
+    searchInputRef.value.focus();
+  };
+
+  defineExpose({
+    focus,
+  });
 </script>
 
 <style lang="scss" scoped>

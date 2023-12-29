@@ -1,7 +1,17 @@
 <template>
   <div class="home">
     <Transition name="fade">
-      <video :key="bgUrl" class="bg-video" autoPlay loop muted :src="bgUrl"></video>
+      <video
+        id="BgVideo"
+        :key="bgUrl"
+        class="bg-video"
+        autoPlay
+        loop
+        muted
+        playsinline
+        webkit-playsinline
+        :src="bgUrl"
+      ></video>
     </Transition>
     <Transition name="fade" appear>
       <div class="title-wrapper" :class="{ 'title-wrapper-show': board.show }">
@@ -67,6 +77,12 @@
     }));
 
   onMounted(() => {
+    document.addEventListener('WeixinJSBridgeReady', () => {
+      const el = document.getElementById('BgVideo');
+      console.log(el);
+      (el as any).play();
+    });
+
     mockRequest('').then((res) => {
       board.show = true;
       board.latest = generateRandomAlbums();
@@ -144,7 +160,7 @@
   }
 
   .title-wrapper-show {
-    top: 10vh;
+    top: 8vh;
     transform: translateY(0);
 
     .title,

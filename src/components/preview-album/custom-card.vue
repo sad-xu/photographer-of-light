@@ -117,7 +117,17 @@
     });
     window.addEventListener('resize', resizeCard);
     if (isTouchDevice) {
-      window.addEventListener('devicemotion', handleDeviceMotion);
+      console.log(window.DeviceOrientationEvent, window.DeviceOrientationEvent?.requestPermission);
+      if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
+        window.DeviceOrientationEvent.requestPermission().then((res) => {
+          console.log(res);
+          // if (res === 'granted') {
+          window.addEventListener('devicemotion', handleDeviceMotion);
+          // }
+        });
+      } else {
+        window.addEventListener('devicemotion', handleDeviceMotion);
+      }
     }
   });
 
@@ -339,7 +349,7 @@
     const now = +new Date();
     timeId = now;
     const rotationRate = e.rotationRate;
-    console.log('rotationRate', rotationRate);
+    console.log('rotationRate', e);
     if (rotationRate?.beta === null) return;
     handleInteract(clamp(rotationRate?.gamma || 50), clamp(rotationRate?.beta || 50));
     setTimeout(() => {
