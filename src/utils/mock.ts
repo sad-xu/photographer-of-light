@@ -153,6 +153,7 @@ export const mockAlbum: Album = {
   createTime: 1698843600,
   updateTime: 1699716600,
   photos: mockPhotos,
+  thumbnails: [],
   type: AlbumType.portrait,
   comments: mockCommonts,
 };
