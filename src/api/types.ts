@@ -1,6 +1,6 @@
 /** 单张照片 */
 export interface Photo {
-  id: string;
+  _id: string;
   name: string;
   url: string;
   /** 原始宽高 */
@@ -12,55 +12,16 @@ export interface Photo {
   isLoaded?: boolean;
 }
 
-/** 相册类型 */
-export const enum AlbumType {
-  portrait = '1', // 人像
-  still = '2', // 景物
-}
-
 /** 相册 */
 export interface Album {
+  _id: string;
   id: string;
   name: string;
-  userId: string;
-  userName: string;
   desc: string;
-  /** 点赞数 */
-  star: number;
-  /** 照片数 */
-  photoNum: number;
-  /** 评论数 */
-  commentNum: number;
   createTime: number;
   updateTime: number;
   photos: Photo[];
-  comments: Comment[];
-  type: AlbumType;
   deleted?: boolean;
-  /** 列表缩略图列表 */
-  thumbnails: string[];
-}
-
-/** 留言 */
-export interface Comment {
-  _id: string;
-  /** 被回复的相册id */
-  albumId: string;
-  /** 被回复的相册名 */
-  albumName: string;
-  /** 相册作者id */
-  albumAuthorId: string;
-  /** 回复人信息 */
-  replierId: string;
-  replierName: string;
-  avatar: string;
-  content: string;
-  t: number;
-  deleted?: boolean;
-  /** 被回复的留言id */
-  replyId?: string;
-  /** 显示用 */
-  children?: Comment[];
 }
 
 /**

@@ -23,7 +23,7 @@
         <x-loading class="loading" v-if="!bgUrl"></x-loading>
       </Transition>
       <!-- 评论区 -->
-      <comment-part :comment-list="commentList"></comment-part>
+      <!-- <comment-part :comment-list="commentList"></comment-part> -->
       <div class="preview-area">
         <!-- header -->
         <div class="photo-header" :style="{ transform: `translate(${offset.x}px,${offset.y}px)` }">
@@ -43,11 +43,11 @@
         <!-- setting -->
         <setting-part
           :albumId="albumInfo.id ?? ''"
-          :is-like="isLike"
+          :is-like="false"
           :setting="setting"
           :img-url="photoList[currentIndex]?.url || ''"
-          @on-edit="handleOpenEdit"
-          @toggle-like="handleToggleLike"
+          @on-edit="() => {}"
+          @toggle-like="() => {}"
           @setting-change="handleSettingChange"
         >
           <svg
@@ -87,14 +87,12 @@
 <script lang="ts" setup>
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
   import CustomCard from './custom-card.vue';
-  import CommentPart from './comment-part.vue';
   import AlbumPagination from './album-pagination.vue';
   import XLoading from '@/common/x-loading.vue';
   import SettingPart from './setting-part.vue';
   import { mockRequest } from '@/api/album';
-  import { Album, Photo, Comment, AlbumType } from '@/api/types';
+  import { Album, Photo } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
-  import useStore from '@/store/app';
   import { CARD_SETTING_KEY, isTouchDevice } from '@/utils';
 
   export interface CardSetting {
@@ -103,7 +101,6 @@
     glare: string;
   }
 
-  const store = useStore();
   const props = defineProps<{
     albumId: string;
   }>();
@@ -129,16 +126,11 @@
   const albumInfo = reactive<Partial<Album>>({
     id: '',
     name: '',
-    userId: '',
-    userName: '',
     desc: '',
-    star: 0,
     createTime: 0,
     updateTime: 0,
-    type: AlbumType.portrait,
   });
   const photoList = ref<Photo[]>([]);
-  const commentList = ref<Comment[]>([]);
 
   // 当前照片index
   const currentIndex = ref(0);
@@ -163,8 +155,6 @@
     console.log(e);
   }
   const setting = reactive<CardSetting>(defaultSetting);
-  // 是否喜欢
-  const isLike = ref(false);
 
   let timeId = 0;
 
@@ -191,20 +181,16 @@
     (id) => {
       if (id) {
         // 初始化是否喜欢
-        isLike.value = store.collection.some((v) => v == id);
+        // isLike.value = store.collection.some((v) => v == id);
         // 获取相册信息+评论
         mockRequest(mockAlbum).then((res: any) => {
           albumInfo.id = res.id;
           albumInfo.name = res.name;
-          albumInfo.userId = res.userId;
-          albumInfo.userName = res.userName;
           albumInfo.desc = res.desc;
-          albumInfo.star = res.star;
           albumInfo.createTime = res.createTime;
           albumInfo.updateTime = res.updateTime;
-          albumInfo.type = res.type;
           photoList.value = res.photos;
-          commentList.value = res.comments;
+          // commentList.value = res.comments;
         });
       }
     },
@@ -263,22 +249,6 @@
   const handleScaleChange = (v: number) => {
     const s = Math.min(Math.max(setting.scale + v, 0.2), 2);
     setting.scale = +`${Math.round(s * 10) / 10}`.slice(0, 3);
-  };
-
-  /** 打开编辑 */
-  const handleOpenEdit = () => {
-    store.openEdit();
-  };
-
-  /** 切换喜欢 */
-  const handleToggleLike = () => {
-    const flag = isLike.value;
-    if (flag) {
-      store.removeCollection(props.albumId);
-    } else {
-      store.addCollection(props.albumId);
-    }
-    isLike.value = !flag;
   };
 
   /** 更新setting */

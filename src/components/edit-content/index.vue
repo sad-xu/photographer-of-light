@@ -1,31 +1,18 @@
 <template>
-  <div class="edit-dialog">
+  <div>
     <div class="edit-header">
       <input
         class="name"
-        v-model="albumInfo.name"
+        v-model.trim="albumInfo.name"
         type="text"
         placeholder="相册名..."
         maxlength="50"
         @keyup.enter="(e: any) => e.target.blur()"
       />
-      <div class="type-wrapper">
-        类型：
-        <input v-model="albumInfo.type" type="radio" id="portrait" :value="AlbumType.portrait" />
-        <label for="portrait">人像</label>
-        <input
-          v-model="albumInfo.type"
-          type="radio"
-          id="still"
-          :value="AlbumType.still"
-          style="margin-left: 16px"
-        />
-        <label for="still">景物</label>
-      </div>
     </div>
     <input
       class="desc"
-      v-model="albumInfo.desc"
+      v-model.trim="albumInfo.desc"
       type="text"
       placeholder="相册简介..."
       maxlength="100"
@@ -67,7 +54,7 @@
             ></img-uploader>
             <input
               class="photo-name"
-              v-model="photo.name"
+              v-model.trim="photo.name"
               type="text"
               maxlength="20"
               placeholder="照片名..."
@@ -122,18 +109,18 @@
       </div>
     </div>
     <div class="footer">
-      <button @click="handleCancle">取消</button>
       <button @click="handleSubmit">{{ isEdit ? '保存' : '新建' }}</button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { Photo, AlbumType } from '@/api/types';
-  import useStore from '@/store/app';
-  import { reactive, ref } from 'vue';
+  import { Photo } from '@/api/types';
+  import { reactive, ref, watch } from 'vue';
   import ImgUploader from './img-uploader.vue';
   import XMessage from '@/common/message.ts';
+  import { mockRequest } from '@/api/album';
+  import { mockAlbum } from '@/utils/mock';
 
   interface EditPhoto extends Photo {
     transId: number; // 动画用唯一id
@@ -146,32 +133,56 @@
     bottom = 2,
   }
 
-  const store = useStore();
+  const props = defineProps<{
+    albumId: string;
+  }>();
 
-  const isEdit = ref(!!store.editId);
-  const loading = ref(false);
+  const isEdit = ref(!!props.albumId);
   const albumInfo = reactive<{
+    id?: string;
     name: string;
     desc: string;
-    type: AlbumType;
     photos: EditPhoto[];
   }>({
+    id: '',
     name: '',
     desc: '',
-    type: AlbumType.portrait,
     photos: [],
   });
 
   const isDrag = ref(false);
 
-  if (store.editId) {
-    // 编辑
-  }
+  watch(
+    () => props.albumId,
+    (id) => {
+      if (id === '-1') {
+        // 新建
+        isEdit.value = false;
+        albumInfo.name = '';
+        albumInfo.desc = '';
+        albumInfo.photos = [];
+      } else {
+        // 编辑
+        isEdit.value = true;
+        mockRequest(mockAlbum).then((res: any) => {
+          albumInfo.id = res.id;
+          albumInfo.name = res.name;
+          albumInfo.desc = res.desc;
+          albumInfo.photos = res.photos.map((v: any) => ({
+            ...v,
+            transId: Math.random(),
+            rotate: 0,
+            fileUrl: '',
+          }));
+        });
+      }
+    }
+  );
 
   const generateNewPhoto = () => {
     return {
       transId: Math.random(),
-      id: '',
+      _id: '',
       name: '',
       url: '',
       fileUrl: '',
@@ -298,7 +309,7 @@
 
   // 提交
   const handleSubmit = () => {
-    const { name, desc, type, photos } = albumInfo;
+    const { name, desc, photos } = albumInfo;
     if (!name.length) return XMessage.warning('请输入相册名~');
     if (!desc.length) return XMessage.warning('请输入相册简介~');
     photos.forEach((photo) => {
@@ -307,20 +318,11 @@
       }
     });
     console.log(albumInfo);
-  };
-
-  // 取消
-  const handleCancle = () => {
-    store.closeEdit();
+    // TODO: 新建 | 编辑
   };
 </script>
 
 <style lang="scss" scoped>
-  .edit-dialog {
-    width: 40vw;
-    min-width: 600px;
-  }
-
   input[type='text'] {
     display: block;
     padding: 8px 12px;
@@ -363,16 +365,6 @@
         font-size: 22px;
       }
     }
-
-    .type-wrapper {
-      display: flex;
-      align-items: center;
-
-      label {
-        text-align: center;
-        cursor: pointer;
-      }
-    }
   }
 
   .desc {
@@ -389,7 +381,7 @@
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    height: 55vh;
+    height: 65vh;
     margin-bottom: 32px;
     padding: 12px 0.8% 0;
     overflow: hidden auto;
