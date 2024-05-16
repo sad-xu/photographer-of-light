@@ -73,7 +73,7 @@
         </div>
       </div>
       <!-- 喜欢 -->
-      <div class="setting">
+      <!-- <div class="setting">
         <div data-name="喜欢" class="setting-icon">
           <svg
             class="icon"
@@ -101,9 +101,9 @@
             ></path>
           </svg>
         </div>
-      </div>
+      </div> -->
       <!-- 编辑 -->
-      <div class="setting">
+      <!-- <div class="setting">
         <div data-name="编辑" class="setting-icon">
           <svg
             class="icon"
@@ -120,7 +120,7 @@
         <div class="setting-content">
           <span class="edit-text" @click="emits('onEdit')">编辑</span>
         </div>
-      </div>
+      </div> -->
       <!-- 原图 -->
       <div class="setting">
         <div data-name="原图" class="setting-icon">
@@ -153,11 +153,11 @@
   import { CardSetting } from './index.vue';
 
   const props = defineProps<{
-    albumId: string;
+    // albumId: string;
     setting: CardSetting;
     // 图片链接
     imgUrl: string;
-    isLike: boolean;
+    // isLike: boolean;
   }>();
 
   const emits = defineEmits<{
@@ -249,7 +249,7 @@
 
     .setting {
       display: flex;
-      align-items: center;
+      align-items: start;
       justify-content: space-between;
       padding: 3px 0;
 
@@ -363,15 +363,18 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    height: 20px;
 
     .dot {
-      width: 4px;
-      height: 4px;
-      margin: 2px 4px;
+      width: 6px;
+      height: 6px;
+      margin: 3px 6px;
       background-color: #fff;
       border-radius: 100%;
       cursor: pointer;
+
+      &:hover {
+        background-color: #f5a49e;
+      }
     }
 
     .selected-dot {

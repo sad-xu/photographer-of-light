@@ -4,7 +4,7 @@
     <div class="bg" :style="{ 'background-image': `url('${bgUrl}')` }"></div>
     <!-- 相册头部 -->
     <div class="album-header">
-      <svg
+      <!-- <svg
         class="back-icon"
         viewBox="0 0 1088 1024"
         version="1.1"
@@ -14,7 +14,7 @@
         <path
           d="M83.648 383.232l339.776-297.28c26.304-26.24 57.024-30.656 83.328-4.352v200.448l14.656-0.064c321.024 0 559.232 228.032 559.232 538.24 0 108.032-49.536 68.672-70.208 30.976-97.408-177.92-268.608-299.328-491.584-299.328l-12.16 0.064v196.16c-26.304 26.24-60.224 23.104-83.328 4.352L83.584 478.336a67.328 67.328 0 0 1 0.064-95.104z"
         ></path>
-      </svg>
+      </svg> -->
       <span class="album-name">{{ albumInfo.name }}</span>
       <div>{{ albumInfo.desc }}</div>
     </div>
@@ -22,8 +22,6 @@
       <Transition name="fade" appear>
         <x-loading class="loading" v-if="!bgUrl"></x-loading>
       </Transition>
-      <!-- 评论区 -->
-      <!-- <comment-part :comment-list="commentList"></comment-part> -->
       <div class="preview-area">
         <!-- header -->
         <div class="photo-header" :style="{ transform: `translate(${offset.x}px,${offset.y}px)` }">
@@ -42,12 +40,8 @@
         ></custom-card>
         <!-- setting -->
         <setting-part
-          :albumId="albumInfo.id ?? ''"
-          :is-like="false"
           :setting="setting"
           :img-url="photoList[currentIndex]?.url || ''"
-          @on-edit="() => {}"
-          @toggle-like="() => {}"
           @setting-change="handleSettingChange"
         >
           <svg
@@ -180,8 +174,6 @@
     () => props.albumId,
     (id) => {
       if (id) {
-        // 初始化是否喜欢
-        // isLike.value = store.collection.some((v) => v == id);
         // 获取相册信息+评论
         mockRequest(mockAlbum).then((res: any) => {
           albumInfo.id = res.id;
@@ -190,7 +182,6 @@
           albumInfo.createTime = res.createTime;
           albumInfo.updateTime = res.updateTime;
           photoList.value = res.photos;
-          // commentList.value = res.comments;
         });
       }
     },

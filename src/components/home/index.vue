@@ -15,7 +15,7 @@
     </Transition>
     <Transition name="fade" appear>
       <div class="title-wrapper" :class="{ 'title-wrapper-show': board.show }">
-        <h1 class="title">光之摄影师</h1>
+        <h1 class="title">光之摄影师 😢 <span style="color: #f44336">暂停开发</span></h1>
         <h3 class="sub-title">Photagrapher Of Light</h3>
       </div>
     </Transition>

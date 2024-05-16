@@ -117,9 +117,10 @@
     });
     window.addEventListener('resize', resizeCard);
     if (isTouchDevice) {
-      console.log(window.DeviceOrientationEvent, window.DeviceOrientationEvent?.requestPermission);
-      if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
-        window.DeviceOrientationEvent.requestPermission().then((res) => {
+      const deviceOrient = window.DeviceOrientationEvent as any;
+      console.log(deviceOrient, deviceOrient?.requestPermission);
+      if (deviceOrient && deviceOrient.requestPermission) {
+        deviceOrient.requestPermission().then((res: any) => {
           console.log(res);
           // if (res === 'granted') {
           window.addEventListener('devicemotion', handleDeviceMotion);
