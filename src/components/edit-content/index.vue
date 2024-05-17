@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="!loading">
     <div class="edit-header">
       <input
         class="name"
@@ -109,9 +109,11 @@
       </div>
     </div>
     <div class="footer">
+      <button v-if="isEdit" @click="handleDelete">{{ albumInfo.deleted ? '还原' : '删除' }}</button>
       <button @click="handleSubmit">{{ isEdit ? '保存' : '新建' }}</button>
     </div>
   </div>
+  <x-loading v-if="loading"></x-loading>
 </template>
 
 <script lang="ts" setup>
@@ -119,7 +121,8 @@
   import { reactive, ref, watch } from 'vue';
   import ImgUploader from './img-uploader.vue';
   import XMessage from '@/common/message.ts';
-  import { mockRequest } from '@/api/album';
+  import XLoading from '@/common/x-loading.vue';
+  import { createAlbum, editAlbum, mockRequest, unDelteAlbum } from '@/api/album';
   import { mockAlbum } from '@/utils/mock';
 
   interface EditPhoto extends Photo {
@@ -138,16 +141,19 @@
   }>();
 
   const isEdit = ref(!!props.albumId);
+  const loading = ref(false);
   const albumInfo = reactive<{
     id?: string;
     name: string;
     desc: string;
     photos: EditPhoto[];
+    deleted: boolean;
   }>({
     id: '',
     name: '',
     desc: '',
     photos: [],
+    deleted: false,
   });
 
   const isDrag = ref(false);
@@ -164,17 +170,23 @@
       } else {
         // 编辑
         isEdit.value = true;
-        mockRequest(mockAlbum).then((res: any) => {
-          albumInfo.id = res.id;
-          albumInfo.name = res.name;
-          albumInfo.desc = res.desc;
-          albumInfo.photos = res.photos.map((v: any) => ({
-            ...v,
-            transId: Math.random(),
-            rotate: 0,
-            fileUrl: '',
-          }));
-        });
+        loading.value = true;
+        mockRequest(mockAlbum)
+          .then((res: any) => {
+            albumInfo.id = res.id;
+            albumInfo.name = res.name;
+            albumInfo.desc = res.desc;
+            albumInfo.deleted = res.deleted;
+            albumInfo.photos = res.photos.map((v: any) => ({
+              ...v,
+              transId: Math.random(),
+              rotate: 0,
+              fileUrl: '',
+            }));
+          })
+          .finally(() => {
+            loading.value = false;
+          });
       }
     }
   );
@@ -307,6 +319,26 @@
     albumInfo.photos[i] = next;
   };
 
+  const handleDelete = () => {
+    if (albumInfo.deleted) {
+      // 还原
+      if (window.confirm('是否还原相册?')) {
+        // unDelteAlbum(albumInfo.id!)
+        mockRequest(true).then((res) => {
+          XMessage.warning('还原成功~');
+        });
+      }
+    } else {
+      // 删除
+      if (window.confirm('是否删除相册?')) {
+        // delteAlbum(albumInfo.id!)
+        mockRequest(true).then((res) => {
+          XMessage.success('删除成功~');
+        });
+      }
+    }
+  };
+
   // 提交
   const handleSubmit = () => {
     const { name, desc, photos } = albumInfo;
@@ -318,38 +350,22 @@
       }
     });
     console.log(albumInfo);
-    // TODO: 新建 | 编辑
+    loading.value = true
+    let p;
+    if (isEdit) {
+      p = editAlbum({...albumInfo})
+    } else {
+      p = createAlbum({...albumInfo})
+    }
+    p.then(res => {
+      XMessage.success('操作成功~');
+    }).finally(() => {
+      loading.value = false
+    })
   };
 </script>
 
 <style lang="scss" scoped>
-  input[type='text'] {
-    display: block;
-    padding: 8px 12px;
-    color: #fff;
-    font-size: 18px;
-    background: #45454599;
-    border: 1px solid #fff;
-    border-radius: 4px;
-    box-shadow: inset 0 0 4px #fff;
-    transition: all 0.3s;
-
-    &:focus {
-      border-color: #2196f3;
-      box-shadow: inset 0 0 4px #4da2c9;
-    }
-
-    &::placeholder {
-      color: #999;
-      font-size: 16px;
-    }
-  }
-
-  input[type='radio'] {
-    margin-right: 4px;
-    cursor: pointer;
-  }
-
   .edit-header {
     display: flex;
     align-items: center;

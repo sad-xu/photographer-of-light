@@ -79,6 +79,9 @@ export const isTouchDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile
   window.navigator.userAgent
 );
 
+/** 是否是iOS */
+export const isIOS = window.navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+
 // return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 export default null;

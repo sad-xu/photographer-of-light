@@ -87,7 +87,7 @@
   import { mockRequest } from '@/api/album';
   import { Album, Photo } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
-  import { CARD_SETTING_KEY, isTouchDevice } from '@/utils';
+  import { CARD_SETTING_KEY, isIOS, isTouchDevice } from '@/utils';
 
   export interface CardSetting {
     scale: number;
@@ -154,7 +154,15 @@
 
   onMounted(() => {
     if (isTouchDevice) {
-      window.addEventListener('deviceorientation', handleOrientation);
+      if (isIOS && (DeviceOrientationEvent as any).requestPermission) {
+        (DeviceOrientationEvent as any).requestPermission().then((res: any) => {
+          if (res !== 'denied') {
+            window.addEventListener('deviceorientation', handleOrientation);
+          }
+        });
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
     } else {
       window.addEventListener('mousemove', handleMousemove);
       window.addEventListener('resize', handleResize);
@@ -360,7 +368,7 @@
         align-items: center;
         justify-content: center;
         width: 100%;
-        padding-bottom: 5vh;
+        padding-bottom: 10vh;
         transition: transform 0.1s;
       }
     }

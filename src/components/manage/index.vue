@@ -1,7 +1,14 @@
 <template>
   <div v-if="isAdmin && !initLoading" class="manager">
     <div class="list-wrapper">
-      <div>
+      <div class="header">
+        <input
+          type="text"
+          class="search-input"
+          v-model.trim="kw"
+          placeholder="关键词"
+          @keyup.enter="handleSearch"
+        />
         <button class="create-button" @click="openCreate">新建</button>
       </div>
       <div>
@@ -40,15 +47,19 @@
   import Hello from './hello.vue';
   import XLoading from '@/common/x-loading.vue';
   import { mockAlbums } from '@/utils/mock';
-  import { mockRequest } from '@/api/album';
+  import { checkIsAdmin, getAlbumList, mockRequest } from '@/api/album';
 
   /** 是否是管理员 */
   const isAdmin = ref(false);
 
+  /** 初始时loading */
   const initLoading = ref(true);
 
   /** 当前相册 */
   const currentAlbumId = ref('');
+
+  /** 列表搜索 */
+  const kw = ref('');
 
   const {
     data: tableData,
@@ -60,22 +71,28 @@
     setOtherParams,
     reRequest,
     handlePageChange,
-  } = usePagination(() =>
-    Promise.resolve({
-      totalCount: 100,
-      totalPages: 10,
-      data: mockAlbums,
-    })
+  } = usePagination(
+    // getAlbumList
+    () =>
+      Promise.resolve({
+        totalCount: 100,
+        totalPages: 10,
+        data: mockAlbums,
+      })
   );
 
   const handleSearch = () => {
     const params: any = {};
+    if (kw.value) {
+      params.kw = kw.value;
+    }
     setCurrentPage(1);
     setOtherParams(params);
     reRequest();
   };
 
   // 1.验证管理员 2.请求列表
+  // checkIsAdmin()
   mockRequest(true)
     .then((flag) => {
       if (flag) {
@@ -117,10 +134,20 @@
     border: 1px solid #eee;
     border-radius: 4px;
 
-    .create-button {
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 8px;
-      padding: 4px 8px;
-      cursor: pointer;
+
+      .search-input {
+        height: 28px;
+      }
+
+      .create-button {
+        padding: 4px 8px;
+        cursor: pointer;
+      }
     }
 
     .album {

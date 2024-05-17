@@ -70,6 +70,7 @@ const generateMockAlbum = (): Album => {
     createTime: 1698843600,
     updateTime: 1699716600,
     photos: mockPhotos,
+    deleted: false,
   };
 };
 
