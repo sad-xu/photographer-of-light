@@ -41,7 +41,7 @@
         hideClose
         :innerStyle="{ paddingTop: 0, alignItems: 'center' }"
       >
-        <edit-content></edit-content>
+        <!-- <edit-content></edit-content> -->
       </x-dialog>
       <!-- 指定用户的已创建相册列表 -->
       <x-dialog v-model:visible="store.targetUserVisible">

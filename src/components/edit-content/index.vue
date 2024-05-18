@@ -48,10 +48,10 @@
             <img-uploader
               :fileUrl="photo.fileUrl"
               :url="photo.url"
-              :rotate="photo.rotate"
               @upload="(file) => handleUpload(file, photo)"
-              @rotate="() => handleRotate(photo)"
             ></img-uploader>
+            <!-- :rotate="photo.rotate" -->
+            <!-- @rotate="() => handleRotate(photo)" -->
             <input
               class="photo-name"
               v-model.trim="photo.name"
@@ -122,7 +122,14 @@
   import ImgUploader from './img-uploader.vue';
   import XMessage from '@/common/message.ts';
   import XLoading from '@/common/x-loading.vue';
-  import { createAlbum, editAlbum, mockRequest, unDelteAlbum } from '@/api/album';
+  import {
+    createAlbum,
+    editAlbum,
+    mockRequest,
+    unDelteAlbum,
+    uploadImg,
+    fetchAdminAlbumDetail,
+  } from '@/api/album';
   import { mockAlbum } from '@/utils/mock';
 
   interface EditPhoto extends Photo {
@@ -137,19 +144,20 @@
   }
 
   const props = defineProps<{
-    albumId: string;
+    albumId: string | number;
   }>();
 
   const isEdit = ref(!!props.albumId);
   const loading = ref(false);
   const albumInfo = reactive<{
-    id?: string;
+    _id?: string;
+    id?: number;
     name: string;
     desc: string;
     photos: EditPhoto[];
     deleted: boolean;
   }>({
-    id: '',
+    id: 0,
     name: '',
     desc: '',
     photos: [],
@@ -171,8 +179,10 @@
         // 编辑
         isEdit.value = true;
         loading.value = true;
-        mockRequest(mockAlbum)
+        fetchAdminAlbumDetail(+id)
+          // mockRequest(mockAlbum)
           .then((res: any) => {
+            albumInfo._id = res._id;
             albumInfo.id = res.id;
             albumInfo.name = res.name;
             albumInfo.desc = res.desc;
@@ -225,7 +235,9 @@
     const dotIndex = fileName.lastIndexOf('.');
     photo.name = dotIndex != -1 ? fileName.slice(0, dotIndex) : fileName;
     photo.fileUrl = fileUrl;
-    photo.url = '';
+    uploadImg(file).then((res) => {
+      photo.url = res;
+    });
   };
 
   // 逆时针旋转
@@ -235,35 +247,38 @@
 
   // 获取缩略图和尺寸 加入旋转
   const initImgThumbnailData = (url: string, photo: EditPhoto) => {
-    const img = new Image();
-    img.onload = (v) => {
-      const size = 20;
-      const imgWidth = img.width;
-      const imgHeight = img.height;
-      const square = Math.min(imgWidth, imgHeight);
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      ctx?.translate(size / 2, size / 2);
-      ctx?.rotate((photo.rotate * Math.PI) / 180);
-      ctx?.drawImage(
-        img,
-        (imgWidth - square) / 2,
-        (imgHeight - square) / 2,
-        square,
-        square,
-        -size / 2,
-        -size / 2,
-        size,
-        size
-      );
-      const isVertical = photo.rotate % 180 == 0;
-      photo.thumbnail = canvas.toDataURL('image/jpeg', 0.9);
-      photo.width = isVertical ? imgWidth : imgHeight;
-      photo.height = isVertical ? imgHeight : imgWidth;
-    };
-    img.src = url;
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = (v) => {
+        const size = 20;
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+        const square = Math.min(imgWidth, imgHeight);
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx?.translate(size / 2, size / 2);
+        ctx?.rotate((photo.rotate * Math.PI) / 180);
+        ctx?.drawImage(
+          img,
+          (imgWidth - square) / 2,
+          (imgHeight - square) / 2,
+          square,
+          square,
+          -size / 2,
+          -size / 2,
+          size,
+          size
+        );
+        const isVertical = photo.rotate % 180 == 0;
+        photo.thumbnail = canvas.toDataURL('image/jpeg', 0.9);
+        photo.width = isVertical ? imgWidth : imgHeight;
+        photo.height = isVertical ? imgHeight : imgWidth;
+        resolve(true);
+      };
+      img.src = url;
+    });
   };
 
   // 移入
@@ -340,28 +355,29 @@
   };
 
   // 提交
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, desc, photos } = albumInfo;
     if (!name.length) return XMessage.warning('请输入相册名~');
     if (!desc.length) return XMessage.warning('请输入相册简介~');
-    photos.forEach((photo) => {
+    for (let i = 0; i < photos.length; i++) {
+      const photo = photos[i];
       if (photo.fileUrl) {
-        initImgThumbnailData(photo.fileUrl, photo);
+        await initImgThumbnailData(photo.fileUrl, photo);
       }
-    });
-    console.log(albumInfo);
-    loading.value = true
-    let p;
-    if (isEdit) {
-      p = editAlbum({...albumInfo})
-    } else {
-      p = createAlbum({...albumInfo})
     }
-    p.then(res => {
+    console.log(JSON.stringify(albumInfo));
+    loading.value = true;
+    let p;
+    if (isEdit.value) {
+      p = editAlbum({ ...albumInfo });
+    } else {
+      p = createAlbum({ ...albumInfo });
+    }
+    p.then((res) => {
       XMessage.success('操作成功~');
     }).finally(() => {
-      loading.value = false
-    })
+      loading.value = false;
+    });
   };
 </script>
 

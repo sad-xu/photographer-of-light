@@ -47,6 +47,7 @@
 </template>
 
 <script lang="ts" setup>
+  // @ts-nocheck
   import { Album } from '@/api/types';
   import ThumbnailsGroup from '@/components/home/thumbnails-group.vue';
 

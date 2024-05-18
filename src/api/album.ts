@@ -29,15 +29,30 @@ export function getAlbumList(params: any) {
   });
 }
 
+function fileToArrayBuffer(file: File): any {
+  let reader = new FileReader();
+  return new Promise((resolve) => {
+    reader.addEventListener('load', (e) => {
+      console.log(e);
+      resolve(e.target?.result);
+    });
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 /** 上传照片 form img rotate */
-export function uploadImg(d: FormData) {
+export async function uploadImg(file: File) {
+  // const arrayBuffer = await fileToArrayBuffer(file);
+  const formData = new FormData();
+  formData.append('img', file);
+  // formData.append('rotate', `${rotate}`);
   return request({
     url: urlAlbum + '/upload-img',
     method: 'post',
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    data: d,
+    data: formData,
   });
 }
 
@@ -60,7 +75,7 @@ export function editAlbum(album: any) {
 }
 
 /** 删除相册 */
-export function delteAlbum(albumId: string) {
+export function delteAlbum(albumId: number) {
   return request({
     url: urlAlbum + '/delete/' + albumId,
     method: 'post',
@@ -68,7 +83,7 @@ export function delteAlbum(albumId: string) {
 }
 
 /** 取消删除相册 */
-export function unDelteAlbum(albumId: string) {
+export function unDelteAlbum(albumId: number) {
   return request({
     url: urlAlbum + '/undelete/' + albumId,
     method: 'post',
@@ -76,14 +91,14 @@ export function unDelteAlbum(albumId: string) {
 }
 
 /** 获取相册详情 */
-export function fetchAlbumDetail(albumId: string) {
+export function fetchAlbumDetail(albumId: number) {
   return request<Album>({
     url: urlAlbum + '/' + albumId,
   });
 }
 
 /** 获取相册详情 管理员使用 */
-export function fetchAdminAlbumDetail(albumId: string) {
+export function fetchAdminAlbumDetail(albumId: number) {
   return request<Album>({
     url: urlAlbum + '/admin/' + albumId,
   });

@@ -23,6 +23,7 @@
 </template>
 
 <script lang="ts" setup>
+  // @ts-nocheck
   import { mockRequest } from '@/api/album';
   import { onMounted, ref } from 'vue';
   import { Comment } from '@/api/types';

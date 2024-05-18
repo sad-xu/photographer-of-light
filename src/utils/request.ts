@@ -1,4 +1,4 @@
-import { uploadErr } from '@/api/base';
+// import { uploadErr } from '@/api/base';
 import axios, { AxiosRequestConfig } from 'axios';
 import createMessage from '@/common/message';
 import { TOKEN_KEY } from '@/utils';
@@ -55,11 +55,11 @@ const request = async <T = any>(config: RequestConfig): Promise<T> => {
     // 500 / 网络异常
 
     // 异常上报
-    if (config.url !== '/api/base/upload-err') {
-      uploadErr('request', (err as any)?.message, JSON.stringify(config));
-    }
+    // if (config.url !== '/api/base/upload-err') {
+    //   uploadErr('request', (err as any)?.message, JSON.stringify(config));
+    // }
 
-    // message.error('ಥ_ಥ');
+    createMessage.error('ಥ_ಥ');
     return Promise.reject(err);
   }
 };

@@ -13,10 +13,10 @@ export default defineConfig({
     host: true,
     open: true,
     proxy: {
-      // '/api': {
-      //   target: '',
-      //   changeOrigin: true,
-      // },
+      '/api': {
+        target: 'http://localhost:9000',
+        changeOrigin: true,
+      },
     },
   },
   plugins: [

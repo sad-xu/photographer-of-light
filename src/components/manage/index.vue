@@ -72,13 +72,13 @@
     reRequest,
     handlePageChange,
   } = usePagination(
-    // getAlbumList
-    () =>
-      Promise.resolve({
-        totalCount: 100,
-        totalPages: 10,
-        data: mockAlbums,
-      })
+    getAlbumList
+    // () =>
+    //   Promise.resolve({
+    //     totalCount: 100,
+    //     totalPages: 10,
+    //     data: mockAlbums,
+    //   })
   );
 
   const handleSearch = () => {
@@ -92,8 +92,8 @@
   };
 
   // 1.验证管理员 2.请求列表
-  // checkIsAdmin()
-  mockRequest(true)
+  checkIsAdmin()
+    // mockRequest(true)
     .then((flag) => {
       if (flag) {
         isAdmin.value = true;

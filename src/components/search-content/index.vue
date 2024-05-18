@@ -1,3 +1,4 @@
+<!-- @ts-ignore -->
 <template>
   <div class="search-content">
     <div>
@@ -116,8 +117,9 @@
 </template>
 
 <script lang="ts" setup>
+  // @ts-nocheck
   import { mockRequest } from '@/api/album';
-  import { Album, AlbumType } from '@/api/types';
+  import { Album } from '@/api/types';
   import { onMounted, reactive, ref } from 'vue';
   import XLoading from '@/common/x-loading.vue';
   import SearchPagination from './search-pagination.vue';

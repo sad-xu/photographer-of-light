@@ -57,6 +57,7 @@
 </template>
 
 <script lang="ts" setup>
+  // @ts-nocheck
   import { Comment } from '@/api/types';
   import { ref, watch, nextTick } from 'vue';
   import CommentItem from './comment-item.vue';

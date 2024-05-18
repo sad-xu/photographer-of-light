@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts" setup>
+  // @ts-nocheck
   import { Comment } from '@/api/types';
   import useStore from '@/store/app';
   import { ref } from 'vue';

@@ -84,7 +84,7 @@
   import AlbumPagination from './album-pagination.vue';
   import XLoading from '@/common/x-loading.vue';
   import SettingPart from './setting-part.vue';
-  import { mockRequest } from '@/api/album';
+  import { fetchAlbumDetail, mockRequest } from '@/api/album';
   import { Album, Photo } from '@/api/types';
   import { mockAlbum } from '@/utils/mock';
   import { CARD_SETTING_KEY, isIOS, isTouchDevice } from '@/utils';
@@ -183,14 +183,16 @@
     (id) => {
       if (id) {
         // 获取相册信息+评论
-        mockRequest(mockAlbum).then((res: any) => {
-          albumInfo.id = res.id;
-          albumInfo.name = res.name;
-          albumInfo.desc = res.desc;
-          albumInfo.createTime = res.createTime;
-          albumInfo.updateTime = res.updateTime;
-          photoList.value = res.photos;
-        });
+        fetchAlbumDetail(+props.albumId)
+          // mockRequest(mockAlbum)
+          .then((res: any) => {
+            albumInfo.id = res.id;
+            albumInfo.name = res.name;
+            albumInfo.desc = res.desc;
+            albumInfo.createTime = res.createTime;
+            albumInfo.updateTime = res.updateTime;
+            photoList.value = res.photos;
+          });
       }
     },
     { immediate: true }
