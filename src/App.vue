@@ -11,13 +11,17 @@
   import Manage from './components/manage/index.vue';
 
   const getAlbumId = () => {
-    const list = window.location.pathname.split('/p/');
-    if (list.length > 1) {
-      return list[1];
-    } else return '';
+    const list = window.location.search.slice(1).split('&');
+    const searchMap: any = {};
+    list.forEach((item) => {
+      const [k, v] = item.split('=');
+      searchMap[k] = v;
+    });
+    const id = +searchMap['id'];
+    if (id) {
+      return id;
+    } else return 0;
   };
 
   const albumId = ref(getAlbumId());
 </script>
-
-<style lang="scss" scoped></style>

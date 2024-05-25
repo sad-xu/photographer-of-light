@@ -101,6 +101,7 @@
 </template>
 
 <script lang="ts" setup>
+  // @ts-nocheck
   import { ref } from 'vue';
   import XDialog from './common/x-dialog.vue';
   import UserSpace from './components/user-space/index.vue';

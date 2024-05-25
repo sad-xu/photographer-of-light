@@ -166,6 +166,28 @@
 
   const isDrag = ref(false);
 
+  const initAllbum = (id: number) => {
+    loading.value = true;
+    fetchAdminAlbumDetail(id)
+      // mockRequest(mockAlbum)
+      .then((res: any) => {
+        albumInfo._id = res._id;
+        albumInfo.id = res.id;
+        albumInfo.name = res.name;
+        albumInfo.desc = res.desc;
+        albumInfo.deleted = res.deleted;
+        albumInfo.photos = res.photos.map((v: any) => ({
+          ...v,
+          transId: Math.random(),
+          rotate: 0,
+          fileUrl: '',
+        }));
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  };
+
   watch(
     () => props.albumId,
     (id) => {
@@ -175,28 +197,11 @@
         albumInfo.name = '';
         albumInfo.desc = '';
         albumInfo.photos = [];
+        albumInfo.deleted = false;
       } else {
         // 编辑
         isEdit.value = true;
-        loading.value = true;
-        fetchAdminAlbumDetail(+id)
-          // mockRequest(mockAlbum)
-          .then((res: any) => {
-            albumInfo._id = res._id;
-            albumInfo.id = res.id;
-            albumInfo.name = res.name;
-            albumInfo.desc = res.desc;
-            albumInfo.deleted = res.deleted;
-            albumInfo.photos = res.photos.map((v: any) => ({
-              ...v,
-              transId: Math.random(),
-              rotate: 0,
-              fileUrl: '',
-            }));
-          })
-          .finally(() => {
-            loading.value = false;
-          });
+        initAllbum(+id);
       }
     }
   );

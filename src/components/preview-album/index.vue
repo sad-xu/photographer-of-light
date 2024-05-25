@@ -20,7 +20,7 @@
     </div>
     <div class="album-body">
       <Transition name="fade" appear>
-        <x-loading class="loading" v-if="!bgUrl"></x-loading>
+        <x-loading class="loading" v-if="loading"></x-loading>
       </Transition>
       <div class="preview-area">
         <!-- header -->
@@ -40,6 +40,7 @@
         ></custom-card>
         <!-- setting -->
         <setting-part
+          v-if="!loading && !noData"
           :setting="setting"
           :img-url="photoList[currentIndex]?.url || ''"
           @setting-change="handleSettingChange"
@@ -75,6 +76,8 @@
         </div>
       </div>
     </div>
+    <!--  -->
+    <no-data v-if="!loading && noData"></no-data>
   </div>
 </template>
 
@@ -82,11 +85,11 @@
   import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
   import CustomCard from './custom-card.vue';
   import AlbumPagination from './album-pagination.vue';
+  import NoData from './no-data.vue';
   import XLoading from '@/common/x-loading.vue';
   import SettingPart from './setting-part.vue';
-  import { fetchAlbumDetail, mockRequest } from '@/api/album';
+  import { fetchAlbumDetail } from '@/api/album';
   import { Album, Photo } from '@/api/types';
-  import { mockAlbum } from '@/utils/mock';
   import { CARD_SETTING_KEY, isIOS, isTouchDevice } from '@/utils';
 
   export interface CardSetting {
@@ -96,12 +99,15 @@
   }
 
   const props = defineProps<{
-    albumId: string;
+    albumId: number;
   }>();
 
   const emits = defineEmits<{
     (e: 'back'): void;
   }>();
+
+  const loading = ref(true);
+  const noData = ref(false);
 
   const customCardRef = ref();
 
@@ -183,15 +189,23 @@
     (id) => {
       if (id) {
         // 获取相册信息+评论
-        fetchAlbumDetail(+props.albumId)
-          // mockRequest(mockAlbum)
+        loading.value = true;
+        fetchAlbumDetail(props.albumId)
           .then((res: any) => {
-            albumInfo.id = res.id;
-            albumInfo.name = res.name;
-            albumInfo.desc = res.desc;
-            albumInfo.createTime = res.createTime;
-            albumInfo.updateTime = res.updateTime;
-            photoList.value = res.photos;
+            if (res) {
+              albumInfo.id = res.id;
+              albumInfo.name = res.name;
+              albumInfo.desc = res.desc;
+              albumInfo.createTime = res.createTime;
+              albumInfo.updateTime = res.updateTime;
+              photoList.value = res.photos;
+              noData.value = false;
+            } else {
+              noData.value = true;
+            }
+          })
+          .finally(() => {
+            loading.value = false;
           });
       }
     },
@@ -335,6 +349,7 @@
       z-index: 2;
       display: flex;
       flex-direction: column;
+      align-items: center;
       justify-content: space-between;
 
       .photo-header {

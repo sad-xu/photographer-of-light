@@ -1,6 +1,6 @@
 <template>
   <div class="album-pagination">
-    <div class="left-arrow arrow" @click="() => togglePhoto(-1)">👈</div>
+    <div class="left-arrow arrow" @click="() => togglePhoto(-1)"></div>
     <div class="dot-wrapper">
       <div
         v-for="(photo, index) in photoList"
@@ -11,7 +11,7 @@
         @click="() => emits('change', index)"
       ></div>
     </div>
-    <div class="right-arrow arrow" @click="() => togglePhoto(1)">👉</div>
+    <div class="right-arrow arrow" @click="() => togglePhoto(1)"></div>
   </div>
 </template>
 
@@ -53,10 +53,13 @@
       justify-content: center;
       width: 30px;
       height: 30px;
+      background-image: url('@/assets/finger.png');
+      background-size: cover;
       cursor: pointer;
     }
 
     .left-arrow {
+      transform: rotateY(180deg);
     }
 
     .right-arrow {

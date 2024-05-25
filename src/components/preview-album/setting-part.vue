@@ -249,7 +249,7 @@
 
     .setting {
       display: flex;
-      align-items: start;
+      align-items: flex-start;
       justify-content: space-between;
       padding: 3px 0;
 

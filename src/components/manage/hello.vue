@@ -52,7 +52,7 @@
 
   const jumpToDetail = () => {
     if (kw.value) {
-      window.location.href = window.location.origin + window.location.pathname + kw.value;
+      window.location.href = window.location.origin + window.location.pathname + `?id=${kw.value}`;
     }
   };
 </script>
